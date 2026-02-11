@@ -63,7 +63,18 @@
 - Config: ~5 files
 - **Total: ~147 files**
 
-## Test Expansion Opportunities (TODOs)
-- Unit: ~24 TODO tests across 6 files
-- Integration: ~8 TODO tests across 4 files
-- E2E: ~32 TODO tests across 8 files
+## Remaining Work
+
+### High Priority
+1. **Smoke test** — Run the app (`dotnet run --project src/SummitRoasters.Web`) and verify all pages load, seeder works, login/cart/checkout flows function. Never been done.
+2. **Fix build warnings** — 4 nullable warnings in `src/SummitRoasters.Web/Views/Products/Detail.cshtml` line 6 (CS8620, breadcrumb tuple type)
+3. **Implement TODO tests** (~64 total):
+   - Unit (~24): Discount code edge cases, stock release/low-stock, cart item merging/weight options, order cancellation stock release, all ReviewService tests, all SearchService tests
+   - Integration (~8): Full order placement flow, order status updates, admin endpoints, discount code API
+   - E2E (~32): Cart add/update/remove, full checkout flow, search + autocomplete, review submission, all admin CRUD, auth register/login/logout
+
+### Nice To Have
+4. **README.md** for the GitHub repo
+5. **GitHub Actions CI** workflow (`dotnet test` on push)
+6. **E2E infrastructure** — Install Playwright browsers, create test fixture to launch app + browser
+7. **Git author config** — Set proper user name/email

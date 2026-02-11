@@ -48,11 +48,15 @@ On first run, seeds: 3 users (admin/sarah/mike), 30 products, 50+ reviews, 10 or
 ## Test IDs
 All interactive elements use `data-testid` attributes following `{component}-{element}-{qualifier}` pattern for Playwright targeting.
 
-## What's Remaining (Phase 5 & 6)
-- **Test scaffolding**: Unit tests (PricingService, InventoryService, CartService, OrderService), integration tests (WebApplicationFactory, endpoint tests), E2E tests (page objects, Playwright test files)
-- **global.json** to pin SDK
-- **git init + commit**
-- Full smoke testing of all flows
+## Current State
+All 6 implementation phases complete. 215 source files, 0 build errors (4 nullable warnings), 17 tests passing.
+
+## What's Remaining
+- **Smoke test** — `dotnet run` has never been executed; runtime behavior is unverified
+- **Fix 4 build warnings** — CS8620 nullable mismatch in `Products/Detail.cshtml` line 6
+- **~64 TODO tests** — Test scaffolding is in place, most tests are placeholders (see `.claude-memory/implementation-status.md`)
+- **README.md** — No repo landing page yet
+- **GitHub Actions CI** — No automated test workflow
 
 ## Conventions
 - File-scoped namespaces throughout
