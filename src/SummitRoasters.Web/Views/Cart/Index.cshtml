@@ -1,0 +1,127 @@
+@model CartViewModel
+@{
+    ViewData["Title"] = "Shopping Cart";
+    ViewData["Breadcrumbs"] = new List<(string Label, string Url)>
+    {
+        ("Cart", "")
+    };
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+    @await Html.PartialAsync("_Breadcrumb")
+
+    <h1 class="font-display text-3xl lg:text-4xl font-bold text-brand-950 mb-8" data-testid="cart-heading">Shopping Cart</h1>
+
+    @if (Model.Items != null && Model.Items.Any())
+    {
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8" data-testid="cart-content">
+            <!-- Cart Items -->
+            <div class="lg:col-span-2" data-testid="cart-items">
+                <div class="bg-white rounded-xl border border-cream-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-display text-lg font-semibold text-brand-950">
+                            Items (<span data-testid="cart-item-count">@Model.Items.Count</span>)
+                        </h2>
+                        <button type="button" id="cart-clear-all" class="text-sm text-brand-400 hover:text-red-500 transition-colors" data-testid="cart-clear-all">
+                            Clear All
+                        </button>
+                    </div>
+
+                    <div data-testid="cart-items-list">
+                        @foreach (var item in Model.Items)
+                        {
+                            @await Html.PartialAsync("_CartItemRow", item)
+                        }
+                    </div>
+                </div>
+
+                <!-- Continue Shopping -->
+                <div class="mt-6">
+                    <a asp-controller="Products" asp-action="Index" class="inline-flex items-center text-brand-500 font-medium hover:text-brand-600 transition-colors text-sm" data-testid="cart-continue-shopping">
+                        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
+                        </svg>
+                        Continue Shopping
+                    </a>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="lg:col-span-1" data-testid="cart-summary">
+                <div class="bg-white rounded-xl border border-cream-200 p-6 sticky top-24">
+                    <h2 class="font-display text-lg font-semibold text-brand-950 mb-4">Order Summary</h2>
+
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between py-2">
+                            <span class="text-brand-400">Subtotal</span>
+                            <span class="font-medium text-brand-950" data-testid="cart-subtotal">$@Model.Subtotal.ToString("F2")</span>
+                        </div>
+                        <div class="flex justify-between py-2">
+                            <span class="text-brand-400">Shipping</span>
+                            <span class="font-medium text-brand-950" data-testid="cart-shipping">
+                                @if (Model.ShippingCost == 0)
+                                {
+                                    <span class="text-green-600">Free</span>
+                                }
+                                else
+                                {
+                                    @:$@Model.ShippingCost.ToString("F2")
+                                }
+                            </span>
+                        </div>
+                        <div class="flex justify-between py-2">
+                            <span class="text-brand-400">Estimated Tax</span>
+                            <span class="font-medium text-brand-950" data-testid="cart-tax">$@Model.Tax.ToString("F2")</span>
+                        </div>
+                        <hr class="border-cream-200" />
+                        <div class="flex justify-between py-2 text-base">
+                            <span class="font-semibold text-brand-950">Total</span>
+                            <span class="font-bold text-brand-500 text-lg" data-testid="cart-total">$@Model.Total.ToString("F2")</span>
+                        </div>
+                    </div>
+
+                    @if (Model.Subtotal < 50)
+                    {
+                        <div class="mt-4 bg-brand-50 rounded-lg p-3 text-sm text-brand-700" data-testid="cart-free-shipping-notice">
+                            <p>Add <span class="font-bold">$@((50 - Model.Subtotal).ToString("F2"))</span> more for free shipping!</p>
+                        </div>
+                    }
+
+                    <a asp-controller="Checkout" asp-action="Index" class="mt-6 w-full bg-brand-500 text-white font-semibold py-3.5 px-8 rounded-full hover:bg-brand-600 transition-colors text-base flex items-center justify-center" data-testid="cart-checkout-button">
+                        Proceed to Checkout
+                    </a>
+
+                    <div class="mt-4 flex items-center justify-center space-x-4 text-xs text-brand-400">
+                        <span class="flex items-center">
+                            <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            Secure Checkout
+                        </span>
+                        <span class="flex items-center">
+                            <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                            Money-Back Guarantee
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        {
+            ViewData["EmptyStateIcon"] = "cart";
+            ViewData["EmptyStateTitle"] = "Your cart is empty";
+            ViewData["EmptyStateMessage"] = "Looks like you haven't added anything to your cart yet. Start exploring our collection of freshly roasted coffee.";
+            ViewData["EmptyStateActionText"] = "Continue Shopping";
+            ViewData["EmptyStateActionUrl"] = Url.Action("Index", "Products");
+        }
+        @await Html.PartialAsync("_EmptyState")
+    }
+</div>
+
+@section Scripts {
+    <script src="~/js/cart.js"></script>
+}

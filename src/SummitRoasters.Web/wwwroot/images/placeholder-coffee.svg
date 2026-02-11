@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#fef3c7"/>
+  <g transform="translate(200,200)">
+    <ellipse cx="0" cy="40" rx="80" ry="90" fill="#92400e" opacity="0.8"/>
+    <ellipse cx="0" cy="30" rx="80" ry="20" fill="#78350f"/>
+    <path d="M80,40 Q120,40 110,0 Q100,-30 80,-10" fill="none" stroke="#92400e" stroke-width="6" stroke-linecap="round"/>
+    <path d="M-15,-20 Q-10,-50 -5,-20" fill="none" stroke="#fbbf24" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+    <path d="M5,-25 Q10,-55 15,-25" fill="none" stroke="#fbbf24" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+    <path d="M-5,-15 Q0,-45 5,-15" fill="none" stroke="#fbbf24" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+  </g>
+  <text x="200" y="350" text-anchor="middle" fill="#92400e" font-family="serif" font-size="18" opacity="0.5">Summit Roasters</text>
+</svg>

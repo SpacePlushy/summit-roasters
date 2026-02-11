@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="" />
+    <title>@ViewData["Title"] - Summit Roasters</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf4eb',
+                            100: '#fae5d0',
+                            200: '#f5c89e',
+                            300: '#efa96b',
+                            400: '#e98d42',
+                            500: '#d4792a',
+                            600: '#b8621f',
+                            700: '#964c1b',
+                            800: '#743b1a',
+                            900: '#5e3218',
+                            950: '#3a160c'
+                        },
+                        cream: {
+                            50: '#fefdfb',
+                            100: '#fdf9f3',
+                            200: '#faf2e6',
+                            300: '#f5e6d0',
+                            400: '#edd5b3',
+                            500: '#e3c196'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['"Playfair Display"', 'serif'],
+                        body: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Playfair Display', serif; }
+    </style>
+</head>
+<body class="bg-cream-50 text-brand-950 font-body min-h-screen flex flex-col">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-brand-500 focus:text-white focus:px-4 focus:py-2 focus:rounded" data-testid="skip-to-content">
+        Skip to content
+    </a>
+
+    <div class="bg-brand-950 text-cream-50 text-center text-sm py-2 font-body" data-testid="announcement-bar">
+        <p>Free shipping on orders over $50 | Freshly roasted to order</p>
+    </div>
+
+    @await Html.PartialAsync("_Header")
+
+    <main id="main-content" class="flex-1">
+        @RenderBody()
+    </main>
+
+    @await Html.PartialAsync("_Footer")
+    @await Html.PartialAsync("_MobileMenu")
+    @await Html.PartialAsync("_ToastNotifications")
+
+    <script src="~/js/site.js"></script>
+    <script src="~/js/cart.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

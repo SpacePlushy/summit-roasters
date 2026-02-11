@@ -1,0 +1,203 @@
+@model AdminOrderDetailViewModel
+@{
+    ViewData["Title"] = $"Order #{Model.OrderNumber}";
+    Layout = "_AdminLayout";
+}
+
+<!-- Order Header -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8" data-testid="admin-order-detail-header">
+    <div>
+        <h1 class="font-display text-2xl font-bold text-brand-950" data-testid="admin-order-detail-number">
+            Order #@Model.OrderNumber
+        </h1>
+        <p class="mt-1 text-sm text-brand-400" data-testid="admin-order-detail-date">
+            Placed on @Model.CreatedAt.ToString("MMMM d, yyyy 'at' h:mm tt")
+        </p>
+    </div>
+    <div class="mt-4 sm:mt-0 flex items-center space-x-3">
+        @{
+            var orderStatusColors = Model.Status switch
+            {
+                OrderStatus.Pending => "bg-yellow-50 text-yellow-700 border-yellow-200",
+                OrderStatus.Processing => "bg-blue-50 text-blue-700 border-blue-200",
+                OrderStatus.Shipped => "bg-purple-50 text-purple-700 border-purple-200",
+                OrderStatus.Delivered => "bg-green-50 text-green-700 border-green-200",
+                OrderStatus.Cancelled => "bg-red-50 text-red-700 border-red-200",
+                _ => "bg-gray-50 text-gray-700 border-gray-200"
+            };
+            var paymentStatusColors = Model.PaymentStatus switch
+            {
+                PaymentStatus.Pending => "bg-yellow-50 text-yellow-700 border-yellow-200",
+                PaymentStatus.Paid => "bg-green-50 text-green-700 border-green-200",
+                PaymentStatus.Refunded => "bg-red-50 text-red-700 border-red-200",
+                _ => "bg-gray-50 text-gray-700 border-gray-200"
+            };
+        }
+        <span class="inline-flex items-center text-xs font-medium px-3 py-1.5 rounded-full border @orderStatusColors" data-testid="admin-order-detail-status">
+            @Model.Status
+        </span>
+        <span class="inline-flex items-center text-xs font-medium px-3 py-1.5 rounded-full border @paymentStatusColors" data-testid="admin-order-detail-payment-status">
+            @Model.PaymentStatus
+        </span>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Left Column -->
+    <div class="lg:col-span-2 space-y-6">
+
+        <!-- Customer Info -->
+        <div class="bg-white rounded-xl border border-cream-200 p-6" data-testid="admin-order-detail-customer">
+            <h2 class="font-display text-lg font-semibold text-brand-950 mb-4">Customer Information</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div>
+                    <p class="text-brand-400">Name</p>
+                    <p class="font-medium text-brand-950" data-testid="admin-order-detail-customer-name">@Model.CustomerName</p>
+                </div>
+                <div>
+                    <p class="text-brand-400">Email</p>
+                    <p class="font-medium text-brand-950" data-testid="admin-order-detail-customer-email">@Model.CustomerEmail</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Items Table -->
+        <div class="bg-white rounded-xl border border-cream-200 overflow-hidden" data-testid="admin-order-detail-items">
+            <div class="p-6 border-b border-cream-200">
+                <h2 class="font-display text-lg font-semibold text-brand-950">Order Items</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full" data-testid="admin-order-detail-items-table">
+                    <thead>
+                        <tr class="bg-cream-50">
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-brand-400 uppercase tracking-wider">Product</th>
+                            <th class="px-6 py-3 text-center text-xs font-semibold text-brand-400 uppercase tracking-wider">Qty</th>
+                            <th class="px-6 py-3 text-right text-xs font-semibold text-brand-400 uppercase tracking-wider">Price</th>
+                            <th class="px-6 py-3 text-right text-xs font-semibold text-brand-400 uppercase tracking-wider">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-cream-200">
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr data-testid="admin-order-detail-item-@item.Slug">
+                                <td class="px-6 py-4">
+                                    <p class="text-sm font-medium text-brand-950">@item.Name</p>
+                                    @if (!string.IsNullOrEmpty(item.Weight) || !string.IsNullOrEmpty(item.Grind))
+                                    {
+                                        <p class="text-xs text-brand-400 mt-0.5">
+                                            @if (!string.IsNullOrEmpty(item.Weight))
+                                            {
+                                                <span>@item.Weight</span>
+                                            }
+                                            @if (!string.IsNullOrEmpty(item.Grind))
+                                            {
+                                                <span>@(string.IsNullOrEmpty(item.Weight) ? "" : " | ")@item.Grind</span>
+                                            }
+                                        </p>
+                                    }
+                                </td>
+                                <td class="px-6 py-4 text-center text-sm text-brand-600">@item.Quantity</td>
+                                <td class="px-6 py-4 text-right text-sm text-brand-600">$@item.UnitPrice.ToString("F2")</td>
+                                <td class="px-6 py-4 text-right text-sm font-medium text-brand-950">$@item.LineTotal.ToString("F2")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Status Update Form -->
+        @if (Model.ValidNextStatuses.Any())
+        {
+            <div class="bg-white rounded-xl border border-cream-200 p-6" data-testid="admin-order-detail-status-update">
+                <h2 class="font-display text-lg font-semibold text-brand-950 mb-4">Update Status</h2>
+                <form asp-controller="Admin" asp-action="UpdateOrderStatus" method="post" class="flex items-end gap-4" data-testid="admin-order-detail-status-form">
+                    <input type="hidden" name="orderId" value="@Model.Id" />
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-brand-950 mb-1">New Status</label>
+                        <select name="status" class="w-full px-4 py-2.5 border border-cream-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent" data-testid="admin-order-detail-status-select">
+                            @foreach (var status in Model.ValidNextStatuses)
+                            {
+                                <option value="@status">@status</option>
+                            }
+                        </select>
+                    </div>
+                    <button type="submit" class="bg-brand-500 text-white font-semibold py-2.5 px-6 rounded-lg hover:bg-brand-600 transition-colors text-sm" data-testid="admin-order-detail-status-submit">
+                        Update Status
+                    </button>
+                </form>
+            </div>
+        }
+    </div>
+
+    <!-- Right Column: Sidebar -->
+    <div class="space-y-6">
+
+        <!-- Order Totals -->
+        <div class="bg-white rounded-xl border border-cream-200 p-6" data-testid="admin-order-detail-totals">
+            <h2 class="font-display text-lg font-semibold text-brand-950 mb-4">Order Totals</h2>
+            <div class="space-y-3 text-sm">
+                <div class="flex justify-between py-1">
+                    <span class="text-brand-400">Subtotal</span>
+                    <span class="font-medium text-brand-950" data-testid="admin-order-detail-subtotal">$@Model.Subtotal.ToString("F2")</span>
+                </div>
+                <div class="flex justify-between py-1">
+                    <span class="text-brand-400">Shipping</span>
+                    <span class="font-medium text-brand-950" data-testid="admin-order-detail-shipping">
+                        @if (Model.Shipping == 0)
+                        {
+                            <span class="text-green-600">Free</span>
+                        }
+                        else
+                        {
+                            <text>$@Model.Shipping.ToString("F2")</text>
+                        }
+                    </span>
+                </div>
+                <div class="flex justify-between py-1">
+                    <span class="text-brand-400">Tax</span>
+                    <span class="font-medium text-brand-950" data-testid="admin-order-detail-tax">$@Model.Tax.ToString("F2")</span>
+                </div>
+                @if (Model.Discount > 0)
+                {
+                    <div class="flex justify-between py-1">
+                        <span class="text-brand-400">Discount</span>
+                        <span class="font-medium text-green-600" data-testid="admin-order-detail-discount">-$@Model.Discount.ToString("F2")</span>
+                    </div>
+                }
+                <hr class="border-cream-200" />
+                <div class="flex justify-between py-1 text-base">
+                    <span class="font-semibold text-brand-950">Total</span>
+                    <span class="font-bold text-brand-500" data-testid="admin-order-detail-total">$@Model.Total.ToString("F2")</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping Address -->
+        <div class="bg-white rounded-xl border border-cream-200 p-6" data-testid="admin-order-detail-shipping-address">
+            <h2 class="font-display text-lg font-semibold text-brand-950 mb-4">Shipping Address</h2>
+            <address class="not-italic text-sm text-brand-600 leading-relaxed">
+                <p class="font-medium text-brand-950">@Model.ShippingFullName</p>
+                <p>@Model.ShippingAddressLine1</p>
+                @if (!string.IsNullOrEmpty(Model.ShippingAddressLine2))
+                {
+                    <p>@Model.ShippingAddressLine2</p>
+                }
+                <p>@Model.ShippingCity, @Model.ShippingState @Model.ShippingZipCode</p>
+                <p>@Model.ShippingCountry</p>
+            </address>
+        </div>
+
+        <!-- Back Link -->
+        <a asp-controller="Admin" asp-action="Orders" class="inline-flex items-center text-brand-500 font-medium hover:text-brand-600 transition-colors text-sm" data-testid="admin-order-detail-back">
+            <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
+            </svg>
+            Back to Orders
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin/order-status.js"></script>
+}

@@ -1,0 +1,153 @@
+@model OrderDetailViewModel
+@{
+    ViewData["Title"] = $"Order #{Model.OrderNumber}";
+    ViewData["Breadcrumbs"] = new List<(string Label, string Url)>
+    {
+        ("My Account", Url.Action("Settings", "Account")),
+        ("Orders", Url.Action("Orders", "Account")),
+        ($"#{Model.OrderNumber}", "")
+    };
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+    @await Html.PartialAsync("_Breadcrumb")
+
+    <!-- Order Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8" data-testid="order-detail-header">
+        <div>
+            <h1 class="font-display text-3xl font-bold text-brand-950" data-testid="order-detail-number">Order #@Model.OrderNumber</h1>
+            <p class="mt-1 text-brand-400" data-testid="order-detail-date">Placed on @Model.OrderDate.ToString("MMMM d, yyyy 'at' h:mm tt")</p>
+        </div>
+        @{
+            var statusColors = Model.Status switch
+            {
+                OrderStatus.Pending => "bg-yellow-50 text-yellow-700 border-yellow-200",
+                OrderStatus.Processing => "bg-blue-50 text-blue-700 border-blue-200",
+                OrderStatus.Shipped => "bg-purple-50 text-purple-700 border-purple-200",
+                OrderStatus.Delivered => "bg-green-50 text-green-700 border-green-200",
+                OrderStatus.Cancelled => "bg-red-50 text-red-700 border-red-200",
+                _ => "bg-gray-50 text-gray-700 border-gray-200"
+            };
+        }
+        <span class="mt-4 sm:mt-0 inline-flex items-center text-sm font-medium px-4 py-2 rounded-full border @statusColors" data-testid="order-detail-status">
+            @Model.Status
+        </span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Order Items -->
+        <div class="lg:col-span-2" data-testid="order-detail-items">
+            <div class="bg-white rounded-xl border border-cream-200 overflow-hidden">
+                <div class="p-6 border-b border-cream-200">
+                    <h2 class="font-display text-lg font-semibold text-brand-950">Order Items</h2>
+                </div>
+                <div class="divide-y divide-cream-200">
+                    @if (Model.Items != null)
+                    {
+                        @foreach (var item in Model.Items)
+                        {
+                            <div class="flex items-center gap-4 p-6" data-testid="order-detail-item-@item.ProductId">
+                                <div class="w-16 h-16 flex-shrink-0 bg-cream-100 rounded-lg overflow-hidden">
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl" alt="@item.Name" class="w-full h-full object-cover" loading="lazy" />
+                                    }
+                                    else
+                                    {
+                                        <div class="w-full h-full flex items-center justify-center">
+                                            <svg class="h-6 w-6 text-cream-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-medium text-brand-950 truncate">@item.Name</h3>
+                                    <p class="text-sm text-brand-400">
+                                        @if (!string.IsNullOrEmpty(item.Weight)) { <span>@item.Weight</span> }
+                                        @if (!string.IsNullOrEmpty(item.GrindType)) { <span>| @item.GrindType</span> }
+                                    </p>
+                                    <p class="text-sm text-brand-400">Qty: @item.Quantity</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-medium text-brand-950">$@item.LineTotal.ToString("F2")</p>
+                                    <p class="text-xs text-brand-400">$@item.UnitPrice.ToString("F2") each</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Order Summary -->
+            <div class="bg-white rounded-xl border border-cream-200 p-6" data-testid="order-detail-summary">
+                <h2 class="font-display text-lg font-semibold text-brand-950 mb-4">Order Summary</h2>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between py-1">
+                        <span class="text-brand-400">Subtotal</span>
+                        <span class="font-medium text-brand-950" data-testid="order-detail-subtotal">$@Model.Subtotal.ToString("F2")</span>
+                    </div>
+                    @if (Model.DiscountAmount > 0)
+                    {
+                        <div class="flex justify-between py-1">
+                            <span class="text-brand-400">Discount</span>
+                            <span class="font-medium text-green-600" data-testid="order-detail-discount">-$@Model.DiscountAmount.ToString("F2")</span>
+                        </div>
+                    }
+                    <div class="flex justify-between py-1">
+                        <span class="text-brand-400">Shipping</span>
+                        <span class="font-medium text-brand-950" data-testid="order-detail-shipping">
+                            @if (Model.ShippingCost == 0)
+                            {
+                                <span class="text-green-600">Free</span>
+                            }
+                            else
+                            {
+                                <text>$@Model.ShippingCost.ToString("F2")</text>
+                            }
+                        </span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-brand-400">Tax</span>
+                        <span class="font-medium text-brand-950" data-testid="order-detail-tax">$@Model.Tax.ToString("F2")</span>
+                    </div>
+                    <hr class="border-cream-200" />
+                    <div class="flex justify-between py-1 text-base">
+                        <span class="font-semibold text-brand-950">Total</span>
+                        <span class="font-bold text-brand-500" data-testid="order-detail-total">$@Model.Total.ToString("F2")</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipping Address -->
+            <div class="bg-white rounded-xl border border-cream-200 p-6" data-testid="order-detail-shipping-address">
+                <h2 class="font-display text-lg font-semibold text-brand-950 mb-4">Shipping Address</h2>
+                @if (Model.ShippingAddress != null)
+                {
+                    <address class="not-italic text-sm text-brand-600 leading-relaxed">
+                        <p class="font-medium text-brand-950">@Model.ShippingAddress.FullName</p>
+                        <p>@Model.ShippingAddress.Street</p>
+                        @if (!string.IsNullOrEmpty(Model.ShippingAddress.Street2))
+                        {
+                            <p>@Model.ShippingAddress.Street2</p>
+                        }
+                        <p>@Model.ShippingAddress.City, @Model.ShippingAddress.State @Model.ShippingAddress.ZipCode</p>
+                    </address>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Orders -->
+    <div class="mt-8">
+        <a asp-controller="Account" asp-action="Orders" class="inline-flex items-center text-brand-500 font-medium hover:text-brand-600 transition-colors text-sm" data-testid="order-detail-back">
+            <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
+            </svg>
+            Back to Orders
+        </a>
+    </div>
+</div>

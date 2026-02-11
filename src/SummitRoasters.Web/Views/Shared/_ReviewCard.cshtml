@@ -1,0 +1,33 @@
+@model ReviewViewModel
+
+<div class="bg-white rounded-xl border border-cream-200 p-6" data-testid="review-card">
+    <div class="flex items-start justify-between mb-3">
+        <div>
+            <div class="flex items-center space-x-2">
+                <span class="font-medium text-brand-950" data-testid="review-card-author">@Model.UserName</span>
+                @if (Model.IsVerifiedPurchase)
+                {
+                    <span class="inline-flex items-center text-xs font-medium text-green-700 bg-green-50 px-2 py-0.5 rounded-full" data-testid="review-card-verified">
+                        <svg class="h-3 w-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Verified Purchase
+                    </span>
+                }
+            </div>
+            <div class="mt-1">
+                @await Html.PartialAsync("_RatingStars", (double)Model.Rating)
+            </div>
+        </div>
+        <time class="text-xs text-brand-400" datetime="@Model.CreatedAt.ToString("yyyy-MM-dd")" data-testid="review-card-date">
+            @Model.CreatedAt.ToString("MMM d, yyyy")
+        </time>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.Title))
+    {
+        <h4 class="font-display text-base font-semibold text-brand-950 mb-2" data-testid="review-card-title">@Model.Title</h4>
+    }
+
+    <p class="text-sm text-brand-800 leading-relaxed" data-testid="review-card-body">@Model.Body</p>
+</div>

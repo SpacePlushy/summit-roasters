@@ -1,0 +1,70 @@
+<!-- Mobile Menu Overlay -->
+<div id="mobile-menu-overlay" class="fixed inset-0 bg-black/50 z-50 hidden" data-testid="mobile-menu-overlay"></div>
+
+<!-- Mobile Menu Slide-out -->
+<div id="mobile-menu" class="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white z-50 transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl" data-testid="mobile-menu">
+    <div class="flex flex-col h-full">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-4 border-b border-cream-200">
+            <span class="font-display text-lg font-bold text-brand-950">Menu</span>
+            <button id="mobile-menu-close" class="p-2 text-brand-950 hover:text-brand-500 transition-colors" data-testid="mobile-menu-close" aria-label="Close menu">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Search (Mobile) -->
+        <div class="p-4 border-b border-cream-200">
+            <form asp-controller="Search" asp-action="Index" method="get">
+                <div class="relative">
+                    <input type="text" name="q" placeholder="Search coffee..."
+                           class="w-full pl-10 pr-4 py-2.5 border border-cream-300 rounded-lg text-sm bg-cream-50 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                           data-testid="mobile-menu-search-input" />
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+            </form>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="flex-1 overflow-y-auto py-4" data-testid="mobile-menu-nav">
+            <a asp-controller="Products" asp-action="Index" class="block px-6 py-3 text-brand-950 hover:bg-cream-50 hover:text-brand-500 font-medium transition-colors" data-testid="mobile-menu-nav-shop">Shop All</a>
+            <a href="/products?category=SingleOrigin" class="block px-6 py-3 text-brand-950 hover:bg-cream-50 hover:text-brand-500 font-medium transition-colors" data-testid="mobile-menu-nav-single-origin">Single Origin</a>
+            <a href="/products?category=Blend" class="block px-6 py-3 text-brand-950 hover:bg-cream-50 hover:text-brand-500 font-medium transition-colors" data-testid="mobile-menu-nav-blends">Blends</a>
+            <a href="/products?category=Equipment" class="block px-6 py-3 text-brand-950 hover:bg-cream-50 hover:text-brand-500 font-medium transition-colors" data-testid="mobile-menu-nav-equipment">Equipment</a>
+            <a asp-controller="Home" asp-action="About" class="block px-6 py-3 text-brand-950 hover:bg-cream-50 hover:text-brand-500 font-medium transition-colors" data-testid="mobile-menu-nav-about">About</a>
+
+            <hr class="my-4 border-cream-200" />
+
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-controller="Account" asp-action="Orders" class="block px-6 py-3 text-brand-950 hover:bg-cream-50 hover:text-brand-500 transition-colors" data-testid="mobile-menu-nav-orders">My Orders</a>
+                <a asp-controller="Account" asp-action="Settings" class="block px-6 py-3 text-brand-950 hover:bg-cream-50 hover:text-brand-500 transition-colors" data-testid="mobile-menu-nav-settings">Settings</a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Admin" asp-action="Index" class="block px-6 py-3 text-brand-500 hover:bg-cream-50 font-medium transition-colors" data-testid="mobile-menu-nav-admin">Admin</a>
+                }
+                <form asp-controller="Account" asp-action="Logout" method="post" class="px-6 py-3">
+                    <button type="submit" class="text-brand-950 hover:text-brand-500 transition-colors" data-testid="mobile-menu-nav-logout">Logout</button>
+                </form>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" class="block px-6 py-3 text-brand-950 hover:bg-cream-50 hover:text-brand-500 font-medium transition-colors" data-testid="mobile-menu-nav-login">Login</a>
+                <a asp-controller="Account" asp-action="Register" class="block px-6 py-3 text-brand-950 hover:bg-cream-50 hover:text-brand-500 font-medium transition-colors" data-testid="mobile-menu-nav-register">Register</a>
+            }
+        </nav>
+
+        <!-- Cart Link -->
+        <div class="p-4 border-t border-cream-200">
+            <a asp-controller="Cart" asp-action="Index" class="flex items-center justify-center space-x-2 w-full bg-brand-500 text-white font-medium py-3 px-4 rounded-lg hover:bg-brand-600 transition-colors" data-testid="mobile-menu-cart-link">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
+                </svg>
+                <span>View Cart</span>
+            </a>
+        </div>
+    </div>
+</div>

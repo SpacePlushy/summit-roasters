@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SummitRoasters.Core/SummitRoasters.Core.csproj" />
+    <Project Path="src/SummitRoasters.Infrastructure/SummitRoasters.Infrastructure.csproj" />
+    <Project Path="src/SummitRoasters.Web/SummitRoasters.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SummitRoasters.E2ETests/SummitRoasters.E2ETests.csproj" />
+    <Project Path="tests/SummitRoasters.IntegrationTests/SummitRoasters.IntegrationTests.csproj" />
+    <Project Path="tests/SummitRoasters.UnitTests/SummitRoasters.UnitTests.csproj" />
+  </Folder>
+</Solution>

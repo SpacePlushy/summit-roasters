@@ -1,0 +1,103 @@
+@{
+    ViewData["Title"] = "About";
+    ViewData["Breadcrumbs"] = new List<(string Label, string Url)>
+    {
+        ("About", "")
+    };
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
+    @await Html.PartialAsync("_Breadcrumb")
+
+    <!-- Hero -->
+    <div class="text-center max-w-3xl mx-auto mb-16">
+        <h1 class="font-display text-4xl lg:text-5xl font-bold text-brand-950" data-testid="about-heading">Our Story</h1>
+        <p class="mt-6 text-lg text-brand-400 leading-relaxed">
+            From a single passion to a community of coffee lovers, Summit Roasters was born from the belief that exceptional coffee can change the way you experience your day.
+        </p>
+    </div>
+
+    <!-- Story Sections -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-20">
+        <div class="aspect-[4/3] bg-cream-200 rounded-2xl overflow-hidden">
+            <div class="w-full h-full bg-gradient-to-br from-brand-100 to-cream-200 flex items-center justify-center">
+                <svg class="h-24 w-24 text-brand-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+            </div>
+        </div>
+        <div>
+            <h2 class="font-display text-3xl font-bold text-brand-950 mb-4">Where It All Began</h2>
+            <p class="text-brand-600 leading-relaxed mb-4">
+                Summit Roasters started in 2018 in a small garage in Portland, Oregon. Our founder, inspired by travels through the coffee-growing highlands of Central America and East Africa, wanted to bring the incredible flavors discovered at origin directly to coffee lovers at home.
+            </p>
+            <p class="text-brand-600 leading-relaxed">
+                What began as a weekend hobby quickly grew into a calling. Each bag of coffee we roast carries the story of its origin -- the altitude, the soil, the hands that carefully harvested each cherry.
+            </p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-20">
+        <div class="order-2 lg:order-1">
+            <h2 class="font-display text-3xl font-bold text-brand-950 mb-4">Our Approach</h2>
+            <p class="text-brand-600 leading-relaxed mb-4">
+                We source our beans directly from farmers and cooperatives, paying premiums that support sustainable farming practices and thriving communities. Every lot is carefully evaluated for quality and character.
+            </p>
+            <p class="text-brand-600 leading-relaxed">
+                Our roasting philosophy is simple: bring out the best in every bean. We use precise temperature profiles to highlight the unique characteristics of each origin, whether it is the bright citrus notes of a Kenyan AA or the chocolate richness of a Colombian Supremo.
+            </p>
+        </div>
+        <div class="order-1 lg:order-2 aspect-[4/3] bg-cream-200 rounded-2xl overflow-hidden">
+            <div class="w-full h-full bg-gradient-to-br from-brand-200 to-cream-200 flex items-center justify-center">
+                <svg class="h-24 w-24 text-brand-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Values -->
+    <div class="bg-white rounded-2xl border border-cream-200 p-8 lg:p-12 mb-20">
+        <h2 class="font-display text-3xl font-bold text-brand-950 text-center mb-10">What We Stand For</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="w-14 h-14 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="h-7 w-7 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/>
+                    </svg>
+                </div>
+                <h3 class="font-display text-lg font-semibold text-brand-950 mb-2">Direct Trade</h3>
+                <p class="text-sm text-brand-400">We build long-term relationships with farmers and pay prices that honor their craft and sustain their communities.</p>
+            </div>
+            <div class="text-center">
+                <div class="w-14 h-14 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="h-7 w-7 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                </div>
+                <h3 class="font-display text-lg font-semibold text-brand-950 mb-2">Quality First</h3>
+                <p class="text-sm text-brand-400">Every batch is cupped and scored before roasting. We only offer coffees that meet our exacting standards.</p>
+            </div>
+            <div class="text-center">
+                <div class="w-14 h-14 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="h-7 w-7 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                </div>
+                <h3 class="font-display text-lg font-semibold text-brand-950 mb-2">Freshness Guaranteed</h3>
+                <p class="text-sm text-brand-400">We roast to order, ensuring every bag arrives at peak flavor. Coffee this fresh makes all the difference.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center">
+        <h2 class="font-display text-3xl font-bold text-brand-950 mb-4">Ready to taste the difference?</h2>
+        <a asp-controller="Products" asp-action="Index" class="inline-flex items-center bg-brand-500 text-white font-semibold py-3 px-8 rounded-full hover:bg-brand-600 transition-colors" data-testid="about-cta-shop">
+            Explore Our Coffee
+            <svg class="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+        </a>
+    </div>
+</div>

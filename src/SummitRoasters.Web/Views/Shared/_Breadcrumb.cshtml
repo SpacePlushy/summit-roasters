@@ -1,0 +1,27 @@
+@{
+    var breadcrumbs = ViewData["Breadcrumbs"] as List<(string Label, string Url)> ?? new List<(string, string)>();
+}
+
+<nav aria-label="Breadcrumb" class="mb-6" data-testid="breadcrumb">
+    <ol class="flex items-center space-x-2 text-sm">
+        <li>
+            <a asp-controller="Home" asp-action="Index" class="text-brand-400 hover:text-brand-500 transition-colors" data-testid="breadcrumb-home">Home</a>
+        </li>
+        @foreach (var crumb in breadcrumbs)
+        {
+            <li class="flex items-center space-x-2">
+                <svg class="h-4 w-4 text-cream-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                @if (!string.IsNullOrEmpty(crumb.Url))
+                {
+                    <a href="@crumb.Url" class="text-brand-400 hover:text-brand-500 transition-colors">@crumb.Label</a>
+                }
+                else
+                {
+                    <span class="text-brand-950 font-medium">@crumb.Label</span>
+                }
+            </li>
+        }
+    </ol>
+</nav>

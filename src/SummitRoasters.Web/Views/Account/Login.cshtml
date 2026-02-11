@@ -1,0 +1,69 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="min-h-[70vh] flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+            <a asp-controller="Home" asp-action="Index" class="inline-flex items-center space-x-2 mb-6">
+                <svg class="h-8 w-8 text-brand-500" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
+                    <path d="M16 2L6 18h6l-2 12 14-16h-6l4-12z"/>
+                    <path d="M4 28L16 8l12 20H4z" opacity="0.3"/>
+                    <path d="M8 28L16 12l8 16H8z" opacity="0.5"/>
+                    <path d="M11 28l5-10 5 10H11z" opacity="0.8"/>
+                </svg>
+                <span class="font-display text-xl font-bold text-brand-950">Summit Roasters</span>
+            </a>
+            <h1 class="font-display text-3xl font-bold text-brand-950">Welcome back</h1>
+            <p class="mt-2 text-brand-400">Sign in to your account to continue</p>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-cream-200 shadow-sm p-8" data-testid="login-form">
+            <form asp-controller="Account" asp-action="Login" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-red-600 text-sm mb-4"></div>
+
+                <!-- Email -->
+                <div class="mb-5">
+                    <label asp-for="Email" class="block text-sm font-medium text-brand-950 mb-2">Email Address</label>
+                    <input asp-for="Email" type="email" placeholder="you@example.com"
+                           class="w-full px-4 py-2.5 border border-cream-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                           data-testid="login-email" />
+                    <span asp-validation-for="Email" class="text-red-500 text-xs mt-1"></span>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <label asp-for="Password" class="block text-sm font-medium text-brand-950">Password</label>
+                        <a href="#" class="text-xs text-brand-500 hover:text-brand-600 transition-colors" data-testid="login-forgot-password">Forgot password?</a>
+                    </div>
+                    <input asp-for="Password" type="password" placeholder="Enter your password"
+                           class="w-full px-4 py-2.5 border border-cream-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                           data-testid="login-password" />
+                    <span asp-validation-for="Password" class="text-red-500 text-xs mt-1"></span>
+                </div>
+
+                <!-- Remember Me -->
+                <div class="mb-6">
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input asp-for="RememberMe" type="checkbox"
+                               class="h-4 w-4 text-brand-500 border-cream-300 rounded focus:ring-brand-500"
+                               data-testid="login-remember" />
+                        <span class="text-sm text-brand-600">Remember me</span>
+                    </label>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="w-full bg-brand-500 text-white font-semibold py-3 px-4 rounded-full hover:bg-brand-600 transition-colors" data-testid="login-submit">
+                    Sign In
+                </button>
+            </form>
+        </div>
+
+        <p class="mt-6 text-center text-sm text-brand-400">
+            Don't have an account?
+            <a asp-controller="Account" asp-action="Register" class="font-medium text-brand-500 hover:text-brand-600 transition-colors" data-testid="login-register-link">Create one</a>
+        </p>
+    </div>
+</div>

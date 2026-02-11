@@ -1,0 +1,135 @@
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<!-- Hero Section -->
+<section class="relative bg-brand-950 overflow-hidden" data-testid="hero-section">
+    <div class="absolute inset-0 opacity-20">
+        <div class="absolute inset-0 bg-gradient-to-r from-brand-950 via-brand-950/80 to-transparent z-10"></div>
+        <div class="w-full h-full bg-[url('/images/hero-bg.jpg')] bg-cover bg-center"></div>
+    </div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-36">
+        <div class="max-w-2xl">
+            <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight" data-testid="hero-heading">
+                Summit Roasters
+            </h1>
+            <p class="mt-4 text-lg sm:text-xl text-cream-200 leading-relaxed" data-testid="hero-tagline">
+                Exceptional coffee sourced from the world's finest growing regions. Freshly roasted, carefully curated, delivered to your door.
+            </p>
+            <div class="mt-8 flex flex-col sm:flex-row gap-4">
+                <a asp-controller="Products" asp-action="Index" class="inline-flex items-center justify-center bg-brand-500 text-white font-semibold py-3.5 px-8 rounded-full hover:bg-brand-600 transition-colors text-base" data-testid="hero-cta-shop">
+                    Shop Coffee
+                    <svg class="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                </a>
+                <a asp-controller="Home" asp-action="About" class="inline-flex items-center justify-center bg-transparent text-white font-semibold py-3.5 px-8 rounded-full border-2 border-white/30 hover:border-white/60 transition-colors text-base" data-testid="hero-cta-about">
+                    Our Story
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="py-16 lg:py-24" data-testid="featured-products-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="font-display text-3xl lg:text-4xl font-bold text-brand-950">Featured Coffees</h2>
+            <p class="mt-3 text-brand-400 max-w-2xl mx-auto">Hand-selected favorites from our master roaster. Each one chosen for its exceptional quality and character.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8" data-testid="featured-products-grid">
+            @if (Model.FeaturedProducts != null)
+            {
+                @foreach (var product in Model.FeaturedProducts)
+                {
+                    @await Html.PartialAsync("_ProductCard", product)
+                }
+            }
+        </div>
+        <div class="text-center mt-10">
+            <a asp-controller="Products" asp-action="Index" class="inline-flex items-center text-brand-500 font-semibold hover:text-brand-600 transition-colors" data-testid="featured-products-view-all">
+                View All Products
+                <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Category Cards -->
+<section class="py-16 lg:py-24 bg-white" data-testid="categories-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="font-display text-3xl lg:text-4xl font-bold text-brand-950">Shop by Category</h2>
+            <p class="mt-3 text-brand-400">Find the perfect coffee for every moment.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8" data-testid="categories-grid">
+            <!-- Single Origin -->
+            <a href="/products?category=SingleOrigin" class="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-brand-950" data-testid="category-card-single-origin">
+                <div class="absolute inset-0 bg-gradient-to-t from-brand-950/80 via-brand-950/40 to-transparent z-10"></div>
+                <div class="w-full h-full bg-cream-200 group-hover:scale-105 transition-transform duration-500"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
+                    <h3 class="font-display text-2xl font-bold text-white">Single Origin</h3>
+                    <p class="text-cream-200 text-sm mt-1">Discover unique flavors from specific regions</p>
+                </div>
+            </a>
+            <!-- Blends -->
+            <a href="/products?category=Blend" class="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-brand-950" data-testid="category-card-blends">
+                <div class="absolute inset-0 bg-gradient-to-t from-brand-950/80 via-brand-950/40 to-transparent z-10"></div>
+                <div class="w-full h-full bg-cream-300 group-hover:scale-105 transition-transform duration-500"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
+                    <h3 class="font-display text-2xl font-bold text-white">Blends</h3>
+                    <p class="text-cream-200 text-sm mt-1">Perfectly balanced combinations</p>
+                </div>
+            </a>
+            <!-- Equipment -->
+            <a href="/products?category=Equipment" class="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-brand-950" data-testid="category-card-equipment">
+                <div class="absolute inset-0 bg-gradient-to-t from-brand-950/80 via-brand-950/40 to-transparent z-10"></div>
+                <div class="w-full h-full bg-cream-200 group-hover:scale-105 transition-transform duration-500"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
+                    <h3 class="font-display text-2xl font-bold text-white">Equipment</h3>
+                    <p class="text-cream-200 text-sm mt-1">Brew like a professional at home</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- New Arrivals -->
+<section class="py-16 lg:py-24" data-testid="new-arrivals-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="font-display text-3xl lg:text-4xl font-bold text-brand-950">New Arrivals</h2>
+            <p class="mt-3 text-brand-400 max-w-2xl mx-auto">The latest additions to our collection, freshly sourced and expertly roasted.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8" data-testid="new-arrivals-grid">
+            @if (Model.NewArrivals != null)
+            {
+                @foreach (var product in Model.NewArrivals)
+                {
+                    @await Html.PartialAsync("_ProductCard", product)
+                }
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="py-16 lg:py-24 bg-brand-950" data-testid="newsletter-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="font-display text-3xl lg:text-4xl font-bold text-white">Join the Summit Community</h2>
+        <p class="mt-4 text-cream-200 max-w-2xl mx-auto">Be the first to know about new roasts, exclusive offers, and brewing tips from our team.</p>
+        <form class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto" data-testid="home-newsletter-form">
+            <input type="email" placeholder="Enter your email"
+                   class="w-full sm:flex-1 px-5 py-3 bg-brand-900 border border-brand-800 rounded-full text-white placeholder-cream-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                   data-testid="home-newsletter-email" />
+            <button type="submit" class="w-full sm:w-auto bg-brand-500 text-white font-semibold py-3 px-8 rounded-full hover:bg-brand-600 transition-colors whitespace-nowrap" data-testid="home-newsletter-submit">
+                Subscribe
+            </button>
+        </form>
+        <p class="mt-4 text-xs text-cream-400">No spam, ever. Unsubscribe anytime.</p>
+    </div>
+</section>

@@ -1,0 +1,66 @@
+@model CartItemViewModel
+
+<div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 py-6 border-b border-cream-200" data-testid="cart-item-@Model.ProductId">
+    <!-- Product Image -->
+    <div class="w-20 h-20 flex-shrink-0 bg-cream-100 rounded-lg overflow-hidden">
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" alt="@Model.Name" class="w-full h-full object-cover" loading="lazy" />
+        }
+        else
+        {
+            <div class="w-full h-full flex items-center justify-center">
+                <svg class="h-8 w-8 text-cream-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+            </div>
+        }
+    </div>
+
+    <!-- Product Details -->
+    <div class="flex-1 min-w-0">
+        <h3 class="font-display text-base font-semibold text-brand-950 truncate" data-testid="cart-item-name-@Model.ProductId">@Model.Name</h3>
+        <div class="mt-1 flex flex-wrap gap-2 text-xs text-brand-400">
+            @if (!string.IsNullOrEmpty(Model.Weight))
+            {
+                <span data-testid="cart-item-weight-@Model.ProductId">@Model.Weight</span>
+            }
+            @if (!string.IsNullOrEmpty(Model.GrindType))
+            {
+                <span>|</span>
+                <span data-testid="cart-item-grind-@Model.ProductId">@Model.GrindType</span>
+            }
+        </div>
+        <p class="mt-1 text-sm font-medium text-brand-500" data-testid="cart-item-unit-price-@Model.ProductId">$@Model.UnitPrice.ToString("F2") each</p>
+    </div>
+
+    <!-- Quantity Selector -->
+    <div class="flex items-center border border-cream-300 rounded-lg" data-testid="cart-item-quantity-@Model.ProductId">
+        <button type="button" class="cart-quantity-decrease px-3 py-2 text-brand-950 hover:text-brand-500 hover:bg-cream-50 transition-colors rounded-l-lg" data-product-id="@Model.ProductId" data-testid="cart-item-decrease-@Model.ProductId">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+            </svg>
+        </button>
+        <input type="number" value="@Model.Quantity" min="1" max="99"
+               class="w-12 text-center text-sm font-medium border-x border-cream-300 py-2 focus:outline-none"
+               data-product-id="@Model.ProductId"
+               data-testid="cart-item-quantity-input-@Model.ProductId" />
+        <button type="button" class="cart-quantity-increase px-3 py-2 text-brand-950 hover:text-brand-500 hover:bg-cream-50 transition-colors rounded-r-lg" data-product-id="@Model.ProductId" data-testid="cart-item-increase-@Model.ProductId">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Line Total -->
+    <div class="text-right min-w-[80px]">
+        <p class="text-base font-bold text-brand-950" data-testid="cart-item-total-@Model.ProductId">$@Model.LineTotal.ToString("F2")</p>
+    </div>
+
+    <!-- Remove Button -->
+    <button type="button" class="cart-item-remove p-2 text-brand-400 hover:text-red-500 transition-colors" data-product-id="@Model.ProductId" data-testid="cart-item-remove-@Model.ProductId" aria-label="Remove @Model.Name from cart">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+    </button>
+</div>

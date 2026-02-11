@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin | Summit Roasters</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf4eb',
+                            100: '#fae5d0',
+                            200: '#f5c89e',
+                            300: '#efa96b',
+                            400: '#e98d42',
+                            500: '#d4792a',
+                            600: '#b8621f',
+                            700: '#964c1b',
+                            800: '#743b1a',
+                            900: '#5e3218',
+                            950: '#3a160c'
+                        },
+                        cream: {
+                            50: '#fefdfb',
+                            100: '#fdf9f3',
+                            200: '#faf2e6',
+                            300: '#f5e6d0',
+                            400: '#edd5b3',
+                            500: '#e3c196'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['"Playfair Display"', 'serif'],
+                        body: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Playfair Display', serif; }
+    </style>
+</head>
+<body class="bg-cream-50 text-brand-950 font-body">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="hidden lg:flex lg:flex-col w-64 bg-brand-950 text-cream-50 fixed inset-y-0 left-0 z-30" data-testid="admin-sidebar">
+            <!-- Logo -->
+            <div class="flex items-center space-x-2 px-6 py-5 border-b border-brand-800">
+                <svg class="h-7 w-7 text-brand-500" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
+                    <path d="M16 2L6 18h6l-2 12 14-16h-6l4-12z"/>
+                    <path d="M4 28L16 8l12 20H4z" opacity="0.3"/>
+                    <path d="M8 28L16 12l8 16H8z" opacity="0.5"/>
+                    <path d="M11 28l5-10 5 10H11z" opacity="0.8"/>
+                </svg>
+                <div>
+                    <span class="font-display text-base font-bold text-white block">Summit Roasters</span>
+                    <span class="text-xs text-cream-400">Admin Panel</span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="flex-1 px-4 py-6 space-y-1" data-testid="admin-sidebar-nav">
+                <a asp-controller="Admin" asp-action="Index"
+                   class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-cream-200 hover:bg-brand-800 hover:text-white transition-colors"
+                   data-testid="admin-nav-dashboard">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+                <a asp-area="" asp-controller="Admin" asp-action="Products"
+                   class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-cream-200 hover:bg-brand-800 hover:text-white transition-colors"
+                   data-testid="admin-nav-products">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                    <span>Products</span>
+                </a>
+                <a asp-area="" asp-controller="Admin" asp-action="Orders"
+                   class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-cream-200 hover:bg-brand-800 hover:text-white transition-colors"
+                   data-testid="admin-nav-orders">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                    </svg>
+                    <span>Orders</span>
+                </a>
+            </nav>
+
+            <!-- Back to Store -->
+            <div class="px-4 py-4 border-t border-brand-800">
+                <a asp-controller="Home" asp-action="Index"
+                   class="flex items-center space-x-2 px-3 py-2.5 rounded-lg text-sm font-medium text-cream-300 hover:bg-brand-800 hover:text-white transition-colors"
+                   data-testid="admin-back-to-store">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
+                    </svg>
+                    <span>Back to Store</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 lg:ml-64">
+            <!-- Top Bar -->
+            <header class="bg-white border-b border-cream-200 sticky top-0 z-20" data-testid="admin-topbar">
+                <div class="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
+                    <!-- Mobile Menu Toggle -->
+                    <button id="admin-mobile-toggle" class="lg:hidden p-2 text-brand-950 hover:text-brand-500" data-testid="admin-mobile-toggle">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+
+                    <h1 class="font-display text-lg font-semibold text-brand-950">@ViewData["Title"]</h1>
+
+                    <div class="flex items-center space-x-4">
+                        <a asp-controller="Home" asp-action="Index" class="text-sm text-brand-400 hover:text-brand-500 transition-colors hidden sm:inline" data-testid="admin-topbar-store-link">
+                            View Store
+                        </a>
+                        <div class="w-8 h-8 bg-brand-100 rounded-full flex items-center justify-center">
+                            <svg class="h-4 w-4 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="p-4 sm:p-6 lg:p-8">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/js/site.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

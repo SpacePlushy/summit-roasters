@@ -1,0 +1,107 @@
+@model AdminProductListViewModel
+@{
+    ViewData["Title"] = "Products";
+    Layout = "_AdminLayout";
+}
+
+<!-- Header -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+    <div>
+        <p class="text-sm text-brand-400 mt-1" data-testid="admin-product-count">@Model.TotalCount products</p>
+    </div>
+    <a asp-controller="Admin" asp-action="CreateProduct" class="mt-4 sm:mt-0 inline-flex items-center bg-brand-500 text-white font-medium py-2.5 px-5 rounded-lg hover:bg-brand-600 transition-colors text-sm" data-testid="admin-product-create-btn">
+        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Add Product
+    </a>
+</div>
+
+<!-- Products Table -->
+<div class="bg-white rounded-xl border border-cream-200 overflow-hidden" data-testid="admin-product-table">
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead>
+                <tr class="bg-cream-50">
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-brand-400 uppercase tracking-wider">Product</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-brand-400 uppercase tracking-wider">Category</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-brand-400 uppercase tracking-wider">Price</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-brand-400 uppercase tracking-wider">Stock</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-brand-400 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-right text-xs font-semibold text-brand-400 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-cream-200">
+                @if (Model.Products != null)
+                {
+                    @foreach (var product in Model.Products)
+                    {
+                        <tr class="hover:bg-cream-50 transition-colors" data-testid="admin-product-row-@product.Id">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-cream-100 rounded-lg flex-shrink-0 overflow-hidden">
+                                        @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                        {
+                                            <img src="@product.ImageUrl" alt="@product.Name" class="w-full h-full object-cover" />
+                                        }
+                                        else
+                                        {
+                                            <div class="w-full h-full flex items-center justify-center">
+                                                <svg class="h-5 w-5 text-cream-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                </svg>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-brand-950" data-testid="admin-product-name-@product.Id">@product.Name</p>
+                                        <p class="text-xs text-brand-400">@product.Slug</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm text-brand-600" data-testid="admin-product-category-@product.Id">@product.Category</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-medium text-brand-950" data-testid="admin-product-price-@product.Id">$@product.Price.ToString("F2")</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-medium @(product.StockQuantity <= 5 ? (product.StockQuantity == 0 ? "text-red-600" : "text-amber-600") : "text-brand-950")" data-testid="admin-product-stock-@product.Id">
+                                    @product.StockQuantity
+                                </span>
+                            </td>
+                            <td class="px-6 py-4" data-testid="admin-product-status-@product.Id">
+                                @if (product.IsActive)
+                                {
+                                    <span class="inline-flex items-center text-xs font-medium bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
+                                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
+                                        Active
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="inline-flex items-center text-xs font-medium bg-gray-50 text-gray-600 px-2 py-0.5 rounded-full">
+                                        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5"></span>
+                                        Inactive
+                                    </span>
+                                }
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <a asp-controller="Admin" asp-action="EditProduct" asp-route-id="@product.Id"
+                                   class="text-sm text-brand-500 hover:text-brand-600 font-medium transition-colors"
+                                   data-testid="admin-product-edit-@product.Id">
+                                    Edit
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (Model.Pagination != null)
+{
+    @await Html.PartialAsync("_Pagination", Model.Pagination)
+}

@@ -1,0 +1,68 @@
+@model OrderConfirmationViewModel
+@{
+    ViewData["Title"] = "Order Confirmed";
+}
+
+<div class="min-h-[60vh] flex items-center justify-center px-4 py-16">
+    <div class="text-center max-w-lg">
+        <!-- Checkmark Icon -->
+        <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6" data-testid="confirmation-icon">
+            <svg class="h-10 w-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+        </div>
+
+        <h1 class="font-display text-3xl lg:text-4xl font-bold text-brand-950 mb-3" data-testid="confirmation-heading">
+            Order Confirmed!
+        </h1>
+        <p class="text-brand-400 text-lg mb-8" data-testid="confirmation-message">
+            Thank you for your order. We'll start roasting your coffee right away.
+        </p>
+
+        <!-- Order Details Card -->
+        <div class="bg-white rounded-xl border border-cream-200 p-6 text-left mb-8" data-testid="confirmation-details">
+            <div class="space-y-4">
+                <div class="flex justify-between items-center py-2 border-b border-cream-200">
+                    <span class="text-sm text-brand-400">Order Number</span>
+                    <span class="font-mono font-bold text-brand-950" data-testid="confirmation-order-number">@Model.OrderNumber</span>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-cream-200">
+                    <span class="text-sm text-brand-400">Order Total</span>
+                    <span class="font-bold text-brand-500 text-lg" data-testid="confirmation-total">$@Model.Total.ToString("F2")</span>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-cream-200">
+                    <span class="text-sm text-brand-400">Estimated Delivery</span>
+                    <span class="font-medium text-brand-950" data-testid="confirmation-delivery">@Model.EstimatedDelivery</span>
+                </div>
+                @if (Model.ShippingAddress != null)
+                {
+                    <div class="py-2">
+                        <span class="text-sm text-brand-400 block mb-2">Shipping To</span>
+                        <address class="not-italic text-sm text-brand-600 leading-relaxed" data-testid="confirmation-shipping-address">
+                            <p class="font-medium text-brand-950">@Model.ShippingAddress.FullName</p>
+                            <p>@Model.ShippingAddress.Street</p>
+                            @if (!string.IsNullOrEmpty(Model.ShippingAddress.Street2))
+                            {
+                                <p>@Model.ShippingAddress.Street2</p>
+                            }
+                            <p>@Model.ShippingAddress.City, @Model.ShippingAddress.State @Model.ShippingAddress.ZipCode</p>
+                        </address>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <p class="text-sm text-brand-400 mb-6" data-testid="confirmation-email-notice">
+            A confirmation email has been sent to your email address with the full order details.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a asp-controller="Account" asp-action="OrderDetail" asp-route-id="@Model.OrderId" class="bg-brand-500 text-white font-medium py-2.5 px-6 rounded-full hover:bg-brand-600 transition-colors text-sm" data-testid="confirmation-view-order">
+                View Order Details
+            </a>
+            <a asp-controller="Products" asp-action="Index" class="text-brand-950 font-medium py-2.5 px-6 rounded-full border border-cream-300 hover:bg-cream-50 transition-colors text-sm" data-testid="confirmation-continue-shopping">
+                Continue Shopping
+            </a>
+        </div>
+    </div>
+</div>

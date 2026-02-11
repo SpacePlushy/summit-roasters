@@ -1,0 +1,115 @@
+@model ProductFilterViewModel
+
+<aside class="space-y-6" data-testid="filter-sidebar">
+    <form asp-controller="Products" asp-action="Index" method="get" data-testid="filter-form">
+        <!-- Category Filter -->
+        <div class="bg-white rounded-xl border border-cream-200 p-5 mb-4" data-testid="filter-category">
+            <h3 class="font-display text-base font-semibold text-brand-950 mb-3">Category</h3>
+            <div class="space-y-2">
+                @if (Model.Categories != null)
+                {
+                    @foreach (var category in Model.Categories)
+                    {
+                        <label class="flex items-center space-x-2 cursor-pointer group">
+                            <input type="checkbox" name="categories" value="@category.Value"
+                                   checked="@category.IsSelected"
+                                   class="h-4 w-4 text-brand-500 border-cream-300 rounded focus:ring-brand-500"
+                                   data-testid="filter-category-@category.Value.ToLowerInvariant()" />
+                            <span class="text-sm text-brand-950 group-hover:text-brand-500 transition-colors">@category.Label</span>
+                            <span class="text-xs text-brand-400 ml-auto">(@category.Count)</span>
+                        </label>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Roast Level Filter -->
+        <div class="bg-white rounded-xl border border-cream-200 p-5 mb-4" data-testid="filter-roast-level">
+            <h3 class="font-display text-base font-semibold text-brand-950 mb-3">Roast Level</h3>
+            <div class="space-y-2">
+                @if (Model.RoastLevels != null)
+                {
+                    @foreach (var roast in Model.RoastLevels)
+                    {
+                        <label class="flex items-center space-x-2 cursor-pointer group">
+                            <input type="checkbox" name="roastLevels" value="@roast.Value"
+                                   checked="@roast.IsSelected"
+                                   class="h-4 w-4 text-brand-500 border-cream-300 rounded focus:ring-brand-500"
+                                   data-testid="filter-roast-@roast.Value.ToLowerInvariant()" />
+                            <span class="text-sm text-brand-950 group-hover:text-brand-500 transition-colors">@roast.Label</span>
+                            <span class="text-xs text-brand-400 ml-auto">(@roast.Count)</span>
+                        </label>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Price Range Filter -->
+        <div class="bg-white rounded-xl border border-cream-200 p-5 mb-4" data-testid="filter-price-range">
+            <h3 class="font-display text-base font-semibold text-brand-950 mb-3">Price Range</h3>
+            <div class="flex items-center space-x-2">
+                <div class="relative flex-1">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-brand-400 text-sm">$</span>
+                    <input type="number" name="minPrice" value="@Model.MinPrice" placeholder="0" min="0" step="1"
+                           class="w-full pl-7 pr-3 py-2 border border-cream-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                           data-testid="filter-price-min" />
+                </div>
+                <span class="text-brand-400 text-sm">to</span>
+                <div class="relative flex-1">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-brand-400 text-sm">$</span>
+                    <input type="number" name="maxPrice" value="@Model.MaxPrice" placeholder="100" min="0" step="1"
+                           class="w-full pl-7 pr-3 py-2 border border-cream-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                           data-testid="filter-price-max" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Rating Filter -->
+        <div class="bg-white rounded-xl border border-cream-200 p-5 mb-4" data-testid="filter-rating">
+            <h3 class="font-display text-base font-semibold text-brand-950 mb-3">Minimum Rating</h3>
+            <div class="space-y-2">
+                @for (int rating = 4; rating >= 1; rating--)
+                {
+                    <label class="flex items-center space-x-2 cursor-pointer group">
+                        <input type="radio" name="minRating" value="@rating"
+                               checked="@(Model.MinRating == rating)"
+                               class="h-4 w-4 text-brand-500 border-cream-300 focus:ring-brand-500"
+                               data-testid="filter-rating-@rating" />
+                        <div class="flex items-center">
+                            @for (int s = 0; s < rating; s++)
+                            {
+                                <svg class="h-4 w-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                            }
+                            <span class="text-xs text-brand-400 ml-1">& up</span>
+                        </div>
+                    </label>
+                }
+            </div>
+        </div>
+
+        <!-- Sort Dropdown -->
+        <div class="bg-white rounded-xl border border-cream-200 p-5 mb-4" data-testid="filter-sort">
+            <h3 class="font-display text-base font-semibold text-brand-950 mb-3">Sort By</h3>
+            <select name="sortBy" class="w-full px-3 py-2 border border-cream-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent" data-testid="filter-sort-select">
+                <option value="featured" selected="@(Model.SortBy == "featured")">Featured</option>
+                <option value="newest" selected="@(Model.SortBy == "newest")">Newest</option>
+                <option value="price-asc" selected="@(Model.SortBy == "price-asc")">Price: Low to High</option>
+                <option value="price-desc" selected="@(Model.SortBy == "price-desc")">Price: High to Low</option>
+                <option value="rating" selected="@(Model.SortBy == "rating")">Highest Rated</option>
+                <option value="name" selected="@(Model.SortBy == "name")">Name: A-Z</option>
+            </select>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex space-x-3">
+            <button type="submit" class="flex-1 bg-brand-500 text-white font-medium py-2.5 px-4 rounded-lg hover:bg-brand-600 transition-colors text-sm" data-testid="filter-apply">
+                Apply Filters
+            </button>
+            <a asp-controller="Products" asp-action="Index" class="flex-1 text-center bg-white text-brand-950 font-medium py-2.5 px-4 rounded-lg border border-cream-300 hover:bg-cream-50 transition-colors text-sm" data-testid="filter-clear">
+                Clear All
+            </a>
+        </div>
+    </form>
+</aside>
