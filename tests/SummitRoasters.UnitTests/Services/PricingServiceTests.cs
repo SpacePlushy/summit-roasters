@@ -60,13 +60,109 @@ public class PricingServiceTests
         result.Should().Be(5.99m);
     }
 
-    // TODO: CalculateTax - verify that CalculateTax returns the correct rounded tax amount (subtotal * 0.08, rounded to 2 decimal places)
+    [Fact]
+    public void CalculateTax_ReturnsCorrectRoundedAmount()
+    {
+        // Arrange
+        var subtotal = 33.33m;
 
-    // TODO: ApplyDiscountCode_ValidPercentage - verify that a valid percentage discount code returns the correct discount amount (e.g., 10% of subtotal)
+        // Act
+        var result = _pricingService.CalculateTax(subtotal);
 
-    // TODO: ApplyDiscountCode_InvalidCode - verify that a non-existent discount code returns a failure result with an appropriate error message
+        // Assert
+        result.Should().Be(2.67m); // 33.33 * 0.08 = 2.6664, rounded to 2.67
+    }
 
-    // TODO: ApplyDiscountCode_ExpiredCode - verify that an expired or inactive discount code returns a failure result indicating the code is no longer available
+    [Fact]
+    public async Task ApplyDiscountCode_ValidPercentage_ReturnsCorrectDiscount()
+    {
+        // Arrange
+        var discount = new DiscountCode
+        {
+            Id = 1,
+            Code = "WELCOME10",
+            Type = DiscountType.Percentage,
+            Value = 10m,
+            IsActive = true,
+            ExpiresAt = DateTime.UtcNow.AddDays(30)
+        };
+        _discountCodeRepositoryMock
+            .Setup(r => r.GetByCodeAsync("WELCOME10"))
+            .ReturnsAsync(discount);
 
-    // TODO: ApplyDiscountCode_MinimumNotMet - verify that a discount code with a minimum order amount returns a failure result when the subtotal is below the minimum
+        // Act
+        var result = await _pricingService.ApplyDiscountCodeAsync("WELCOME10", 100m);
+
+        // Assert
+        result.IsValid.Should().BeTrue();
+        result.DiscountAmount.Should().Be(10m); // 10% of 100
+        result.DiscountCode.Should().Be("WELCOME10");
+    }
+
+    [Fact]
+    public async Task ApplyDiscountCode_InvalidCode_ReturnsFailure()
+    {
+        // Arrange
+        _discountCodeRepositoryMock
+            .Setup(r => r.GetByCodeAsync("BADCODE"))
+            .ReturnsAsync((DiscountCode?)null);
+
+        // Act
+        var result = await _pricingService.ApplyDiscountCodeAsync("BADCODE", 50m);
+
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.ErrorMessage.Should().Contain("Invalid discount code");
+    }
+
+    [Fact]
+    public async Task ApplyDiscountCode_ExpiredCode_ReturnsFailure()
+    {
+        // Arrange
+        var discount = new DiscountCode
+        {
+            Id = 2,
+            Code = "EXPIRED",
+            Type = DiscountType.Percentage,
+            Value = 15m,
+            IsActive = true,
+            ExpiresAt = DateTime.UtcNow.AddDays(-1) // expired yesterday
+        };
+        _discountCodeRepositoryMock
+            .Setup(r => r.GetByCodeAsync("EXPIRED"))
+            .ReturnsAsync(discount);
+
+        // Act
+        var result = await _pricingService.ApplyDiscountCodeAsync("EXPIRED", 50m);
+
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.ErrorMessage.Should().Contain("expired");
+    }
+
+    [Fact]
+    public async Task ApplyDiscountCode_MinimumNotMet_ReturnsFailure()
+    {
+        // Arrange
+        var discount = new DiscountCode
+        {
+            Id = 3,
+            Code = "BIGORDER",
+            Type = DiscountType.Percentage,
+            Value = 20m,
+            IsActive = true,
+            ExpiresAt = DateTime.UtcNow.AddDays(30),
+            MinimumOrderAmount = 75m
+        };
+        _discountCodeRepositoryMock
+            .Setup(r => r.GetByCodeAsync("BIGORDER"))
+            .ReturnsAsync(discount);
+
+        // Act
+        var result = await _pricingService.ApplyDiscountCodeAsync("BIGORDER", 30m);
+
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.ErrorMessage.Should().Contain("Minimum order");
+    }
 }

@@ -94,13 +94,104 @@ public class CartServiceTests
         result.Items[0].Quantity.Should().Be(3);
     }
 
-    // TODO: AddItem_IncrementsQuantity_WhenSameProductExists - verify that adding the same product (matching productId, weight, and grind) increments the existing item's quantity instead of adding a duplicate
+    [Fact]
+    public async Task AddItem_IncrementsQuantity_WhenSameProductExists()
+    {
+        // Arrange
+        var product = new Product
+        {
+            Id = 1,
+            Name = "Summit Blend",
+            Slug = "summit-blend",
+            Price = 16.99m,
+            StockQuantity = 10,
+            WeightOptions = new List<WeightOption>()
+        };
+        _productRepositoryMock
+            .Setup(r => r.GetByIdAsync(1))
+            .ReturnsAsync(product);
 
-    // TODO: AddItem_ThrowsWhenProductNotFound - verify that AddItemAsync throws an InvalidOperationException when the product does not exist in the repository
+        var dto = new AddToCartDto { ProductId = 1, Quantity = 1 };
 
-    // TODO: UpdateItemQuantity_RemovesWhenZero - verify that calling UpdateItemQuantity with quantity 0 or less removes the item from the cart
+        // Add first item
+        await _cartService.AddItemAsync(dto);
 
-    // TODO: ClearCart - verify that ClearCart delegates to ICartStorage.ClearCart and the cart is emptied
+        // Act - add same product again
+        var result = await _cartService.AddItemAsync(dto);
 
-    // TODO: GetItemCount - verify that GetItemCount returns the sum of all item quantities in the cart
+        // Assert
+        result.Items.Should().HaveCount(1);
+        result.Items[0].Quantity.Should().Be(2);
+    }
+
+    [Fact]
+    public async Task AddItem_ThrowsWhenProductNotFound()
+    {
+        // Arrange
+        _productRepositoryMock
+            .Setup(r => r.GetByIdAsync(999))
+            .ReturnsAsync((Product?)null);
+
+        var dto = new AddToCartDto { ProductId = 999, Quantity = 1 };
+
+        // Act
+        var act = () => _cartService.AddItemAsync(dto);
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidOperationException>()
+            .WithMessage("*not found*");
+    }
+
+    [Fact]
+    public void UpdateItemQuantity_RemovesWhenZero()
+    {
+        // Arrange
+        _cart.Items.Add(new CartItem
+        {
+            ProductId = 1,
+            ProductName = "Summit Blend",
+            UnitPrice = 16.99m,
+            Quantity = 2
+        });
+
+        // Act
+        var result = _cartService.UpdateItemQuantity(1, 0);
+
+        // Assert
+        result.Items.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ClearCart_EmptiesCart()
+    {
+        // Arrange
+        _cart.Items.Add(new CartItem
+        {
+            ProductId = 1,
+            ProductName = "Summit Blend",
+            UnitPrice = 16.99m,
+            Quantity = 1
+        });
+
+        // Act
+        _cartService.ClearCart();
+
+        // Assert
+        _cartStorageMock.Verify(s => s.ClearCart(), Times.Once);
+        _cart.Items.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void GetItemCount_ReturnsSumOfQuantities()
+    {
+        // Arrange
+        _cart.Items.Add(new CartItem { ProductId = 1, ProductName = "A", UnitPrice = 10m, Quantity = 2 });
+        _cart.Items.Add(new CartItem { ProductId = 2, ProductName = "B", UnitPrice = 15m, Quantity = 3 });
+
+        // Act
+        var result = _cartService.GetItemCount();
+
+        // Assert
+        result.Should().Be(5);
+    }
 }

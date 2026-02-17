@@ -13,11 +13,16 @@ public class CartPage
         _baseUrl = baseUrl;
     }
 
+    public IPage Page => _page;
+
     public async Task NavigateAsync() => await _page.GotoAsync($"{_baseUrl}/cart");
-    public ILocator CartItems => _page.Locator("[data-testid='cart-item']");
+    public ILocator CartItems => _page.Locator("[data-testid^='cart-item-'][data-testid$='-remove']").Locator("..");
+    public ILocator CartItemsList => _page.Locator("[data-testid='cart-items-list']");
     public ILocator CartSubtotal => _page.Locator("[data-testid='cart-subtotal']");
-    public ILocator CheckoutButton => _page.Locator("[data-testid='checkout-button']");
-    public ILocator EmptyCartMessage => _page.Locator("[data-testid='empty-cart']");
-    public ILocator QuantityInputs => _page.Locator("[data-testid='cart-item-quantity']");
-    public ILocator RemoveButtons => _page.Locator("[data-testid='cart-item-remove']");
+    public ILocator CartTotal => _page.Locator("[data-testid='cart-total']");
+    public ILocator CheckoutButton => _page.Locator("[data-testid='cart-checkout-button']");
+    public ILocator EmptyState => _page.Locator("[data-testid='empty-state']");
+    public ILocator CartHeading => _page.Locator("[data-testid='cart-heading']");
+    public ILocator CartItemCount => _page.Locator("[data-testid='cart-item-count']");
+    public ILocator CartBadge => _page.Locator("[data-testid='header-cart-badge']");
 }

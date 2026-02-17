@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function initStarRating() {
-    var stars = document.querySelectorAll('[data-testid^="review-star-"]');
+    var stars = document.querySelectorAll('[data-testid^="review-form-star-"]');
     var ratingInput = document.querySelector('[data-testid="review-rating-input"]');
 
     if (!stars.length || !ratingInput) return;

@@ -13,6 +13,8 @@ public class ProductListingPage
         _baseUrl = baseUrl;
     }
 
+    public IPage Page => _page;
+
     public async Task NavigateAsync(string? category = null)
     {
         var url = $"{_baseUrl}/products";
@@ -20,10 +22,13 @@ public class ProductListingPage
         await _page.GotoAsync(url);
     }
 
-    public ILocator ProductCards => _page.Locator("[data-testid='product-card']");
+    public ILocator ProductCards => _page.Locator("[data-testid='products-grid'] > [data-testid^='product-card-']");
+    public ILocator ProductsGrid => _page.Locator("[data-testid='products-grid']");
     public ILocator FilterSidebar => _page.Locator("[data-testid='filter-sidebar']");
-    public ILocator SortSelect => _page.Locator("[data-testid='sort-select']");
+    public ILocator SortSelect => _page.Locator("[data-testid='products-filter-sidebar'] [data-testid='filter-sort-select']");
+    public ILocator FilterApply => _page.Locator("[data-testid='products-filter-sidebar'] [data-testid='filter-apply']");
     public ILocator Pagination => _page.Locator("[data-testid='pagination']");
-    public ILocator ActiveFilters => _page.Locator("[data-testid='active-filters']");
-    public ILocator ProductCount => _page.Locator("[data-testid='product-count']");
+    public ILocator PaginationNext => _page.Locator("[data-testid='pagination-next']");
+    public ILocator ProductCount => _page.Locator("[data-testid='products-count']");
+    public ILocator ProductsHeading => _page.Locator("[data-testid='products-heading']");
 }

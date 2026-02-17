@@ -1,27 +1,84 @@
+using FluentAssertions;
+using Microsoft.Playwright;
+using SummitRoasters.E2ETests.Fixtures;
 using SummitRoasters.E2ETests.PageObjects;
 
 namespace SummitRoasters.E2ETests;
 
+[Collection("Browser")]
 public class SmokeTests
 {
-    private const string BaseUrl = "https://localhost:5001";
+    private readonly BrowserFixture _fixture;
 
-    // TODO: Set up Playwright browser in test fixture
-    // private IPlaywright _playwright;
-    // private IBrowser _browser;
-    // private IPage _page;
-
-    [Fact(Skip = "E2E tests require running application")]
-    public async Task Homepage_Loads_Successfully()
+    public SmokeTests(BrowserFixture fixture)
     {
-        // var page = ... // create page from browser
-        // var homePage = new HomePage(page, BaseUrl);
-        // await homePage.NavigateAsync();
-        // await Expect(page).ToHaveTitleAsync(new Regex("Summit Roasters"));
-        await Task.CompletedTask;
+        _fixture = fixture;
     }
 
-    // TODO: Navigation links work and lead to correct pages
-    // TODO: Footer is visible on all pages
-    // TODO: Mobile menu toggles on small screens
+    [Fact]
+    public async Task Homepage_Loads_Successfully()
+    {
+        var page = await _fixture.NewPageAsync();
+        var homePage = new HomePage(page, _fixture.BaseUrl);
+        await homePage.NavigateAsync();
+
+        await Assertions.Expect(page).ToHaveTitleAsync(new System.Text.RegularExpressions.Regex("Summit Roasters"));
+        await Assertions.Expect(homePage.HeroSection).ToBeVisibleAsync();
+        await Assertions.Expect(homePage.HeroHeading).ToContainTextAsync("Summit Roasters");
+    }
+
+    [Fact]
+    public async Task NavigationLinks_LeadToCorrectPages()
+    {
+        var page = await _fixture.NewPageAsync();
+        var homePage = new HomePage(page, _fixture.BaseUrl);
+        await homePage.NavigateAsync();
+
+        // Click Shop nav link
+        await page.Locator("[data-testid='header-nav-shop']").ClickAsync();
+        await page.WaitForURLAsync(new System.Text.RegularExpressions.Regex("/products"));
+        await Assertions.Expect(page.Locator("[data-testid='products-heading']")).ToBeVisibleAsync();
+
+        // Click About nav link
+        await page.Locator("[data-testid='header-nav-about']").ClickAsync();
+        await page.WaitForURLAsync(new System.Text.RegularExpressions.Regex("/Home/About"));
+        await Assertions.Expect(page).ToHaveTitleAsync(new System.Text.RegularExpressions.Regex("About"));
+    }
+
+    [Fact]
+    public async Task Footer_IsVisibleOnAllPages()
+    {
+        var page = await _fixture.NewPageAsync();
+        var homePage = new HomePage(page, _fixture.BaseUrl);
+
+        // Check footer on homepage
+        await homePage.NavigateAsync();
+        await Assertions.Expect(homePage.Footer).ToBeVisibleAsync();
+
+        // Check footer on products page
+        await page.GotoAsync($"{_fixture.BaseUrl}/products");
+        await Assertions.Expect(page.Locator("[data-testid='footer']")).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task MobileMenu_TogglesOnSmallScreens()
+    {
+        var page = await _fixture.NewPageAsync();
+        // Set mobile viewport
+        await page.SetViewportSizeAsync(375, 667);
+
+        var homePage = new HomePage(page, _fixture.BaseUrl);
+        await homePage.NavigateAsync();
+
+        // Mobile menu toggle should be visible
+        await Assertions.Expect(homePage.MobileMenuToggle).ToBeVisibleAsync();
+
+        // Open mobile menu
+        await homePage.MobileMenuToggle.ClickAsync();
+        await Assertions.Expect(homePage.MobileMenu).ToBeVisibleAsync();
+
+        // Close mobile menu
+        await homePage.MobileMenuClose.ClickAsync();
+        await page.WaitForTimeoutAsync(500);
+    }
 }

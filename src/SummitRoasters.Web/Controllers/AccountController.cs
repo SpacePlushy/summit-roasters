@@ -135,8 +135,7 @@ public class AccountController : Controller
                 TotalPages = totalPages,
                 TotalItems = totalCount,
                 PageSize = pageSize,
-                Action = "Orders",
-                Controller = "Account"
+                BaseUrl = "/account/orders"
             }
         };
 

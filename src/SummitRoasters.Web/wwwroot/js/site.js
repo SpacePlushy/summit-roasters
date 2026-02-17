@@ -35,8 +35,8 @@ function initMobileMenu() {
 
 // User Dropdown
 function initUserDropdown() {
-    const trigger = document.querySelector('[data-testid="header-user-menu-trigger"]');
-    const dropdown = document.querySelector('[data-testid="header-user-menu-dropdown"]');
+    const trigger = document.querySelector('[data-testid="header-user-menu-toggle"]');
+    const dropdown = document.querySelector('[data-testid="header-user-dropdown"]');
 
     if (!trigger || !dropdown) return;
 

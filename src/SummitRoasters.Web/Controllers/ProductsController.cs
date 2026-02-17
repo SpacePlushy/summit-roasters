@@ -66,8 +66,7 @@ public class ProductsController : Controller
                 TotalPages = totalPages,
                 TotalItems = totalCount,
                 PageSize = pageSize,
-                Action = "Index",
-                Controller = "Products"
+                BaseUrl = "/products"
             }
         };
 

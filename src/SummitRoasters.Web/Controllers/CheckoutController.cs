@@ -92,7 +92,7 @@ public class CheckoutController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> PlaceOrder(ShippingAddressFormViewModel shipping, string? discountCode)
+    public async Task<IActionResult> PlaceOrder([Bind(Prefix = "ShippingAddress")] ShippingAddressFormViewModel shipping, string? discountCode)
     {
         if (!ModelState.IsValid)
         {

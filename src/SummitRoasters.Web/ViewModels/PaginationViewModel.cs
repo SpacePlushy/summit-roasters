@@ -8,8 +8,7 @@ public class PaginationViewModel
     public int PageSize { get; set; }
     public bool HasPrevious => CurrentPage > 1;
     public bool HasNext => CurrentPage < TotalPages;
-    public string Action { get; set; } = string.Empty;
-    public string Controller { get; set; } = string.Empty;
+    public string BaseUrl { get; set; } = string.Empty;
     public Dictionary<string, string> RouteValues { get; set; } = new();
 
     // Aliases used by views
@@ -24,6 +23,6 @@ public class PaginationViewModel
             ["page"] = page.ToString()
         };
         var queryString = string.Join("&", routeValues.Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value)}"));
-        return $"/{Controller}/{Action}?{queryString}";
+        return $"{BaseUrl}?{queryString}";
     }
 }

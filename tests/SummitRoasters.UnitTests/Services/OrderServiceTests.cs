@@ -95,13 +95,162 @@ public class OrderServiceTests
         order.Status.Should().Be(OrderStatus.Delivered);
     }
 
-    // TODO: CreateFromCart_CreatesOrderWithCorrectTotals - verify that CreateFromCartAsync creates an order with correctly calculated subtotal, shipping, tax, and total using the pricing service
+    [Fact]
+    public async Task CreateFromCart_CreatesOrderWithCorrectTotals()
+    {
+        // Arrange
+        var cart = new Cart();
+        cart.Items.Add(new CartItem
+        {
+            ProductId = 1,
+            ProductName = "Summit Blend",
+            ProductSlug = "summit-blend",
+            UnitPrice = 16.99m,
+            Quantity = 2
+        });
+        _cartServiceMock.Setup(s => s.GetCart()).Returns(cart);
 
-    // TODO: CreateFromCart_ThrowsWhenCartEmpty - verify that CreateFromCartAsync throws an InvalidOperationException when the cart has no items
+        _inventoryServiceMock
+            .Setup(s => s.ReserveStockAsync(It.IsAny<int>(), It.IsAny<int>()))
+            .ReturnsAsync(true);
 
-    // TODO: CreateFromCart_ReservesStock - verify that CreateFromCartAsync calls ReserveStockAsync for each item in the cart
+        _pricingServiceMock.Setup(s => s.CalculateShipping(33.98m)).Returns(5.99m);
+        _pricingServiceMock.Setup(s => s.CalculateTax(33.98m)).Returns(2.72m);
 
-    // TODO: UpdateStatus_CancelledReleasesStock - verify that transitioning to Cancelled status calls ReleaseStockAsync for each order item
+        _orderRepositoryMock
+            .Setup(r => r.AddAsync(It.IsAny<Order>()))
+            .ReturnsAsync((Order o) => o);
 
-    // TODO: UpdateStatus_CancelledSetsRefunded - verify that transitioning to Cancelled status sets PaymentStatus to Refunded
+        var address = new ShippingAddressDto
+        {
+            FullName = "Test User",
+            AddressLine1 = "123 Test St",
+            City = "Denver",
+            State = "CO",
+            ZipCode = "80202"
+        };
+
+        // Act
+        var result = await _orderService.CreateFromCartAsync("user-1", address);
+
+        // Assert
+        result.Subtotal.Should().Be(33.98m);
+        result.ShippingCost.Should().Be(5.99m);
+        result.Tax.Should().Be(2.72m);
+        result.Total.Should().Be(33.98m + 5.99m + 2.72m);
+    }
+
+    [Fact]
+    public async Task CreateFromCart_ThrowsWhenCartEmpty()
+    {
+        // Arrange
+        var emptyCart = new Cart();
+        _cartServiceMock.Setup(s => s.GetCart()).Returns(emptyCart);
+
+        var address = new ShippingAddressDto
+        {
+            FullName = "Test User",
+            AddressLine1 = "123 Test St",
+            City = "Denver",
+            State = "CO",
+            ZipCode = "80202"
+        };
+
+        // Act
+        var act = () => _orderService.CreateFromCartAsync("user-1", address);
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidOperationException>()
+            .WithMessage("*empty*");
+    }
+
+    [Fact]
+    public async Task CreateFromCart_ReservesStock()
+    {
+        // Arrange
+        var cart = new Cart();
+        cart.Items.Add(new CartItem { ProductId = 1, ProductName = "A", ProductSlug = "a", UnitPrice = 10m, Quantity = 2 });
+        cart.Items.Add(new CartItem { ProductId = 2, ProductName = "B", ProductSlug = "b", UnitPrice = 15m, Quantity = 1 });
+        _cartServiceMock.Setup(s => s.GetCart()).Returns(cart);
+
+        _inventoryServiceMock
+            .Setup(s => s.ReserveStockAsync(It.IsAny<int>(), It.IsAny<int>()))
+            .ReturnsAsync(true);
+
+        _pricingServiceMock.Setup(s => s.CalculateShipping(It.IsAny<decimal>())).Returns(0m);
+        _pricingServiceMock.Setup(s => s.CalculateTax(It.IsAny<decimal>())).Returns(0m);
+
+        _orderRepositoryMock
+            .Setup(r => r.AddAsync(It.IsAny<Order>()))
+            .ReturnsAsync((Order o) => o);
+
+        var address = new ShippingAddressDto
+        {
+            FullName = "Test User",
+            AddressLine1 = "123 Test St",
+            City = "Denver",
+            State = "CO",
+            ZipCode = "80202"
+        };
+
+        // Act
+        await _orderService.CreateFromCartAsync("user-1", address);
+
+        // Assert
+        _inventoryServiceMock.Verify(s => s.ReserveStockAsync(1, 2), Times.Once);
+        _inventoryServiceMock.Verify(s => s.ReserveStockAsync(2, 1), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateStatus_CancelledReleasesStock()
+    {
+        // Arrange
+        var order = new Order
+        {
+            Id = 1,
+            OrderNumber = "SR-20260101-ABCD1234",
+            Status = OrderStatus.Pending,
+            Items = new List<OrderItem>
+            {
+                new OrderItem { ProductId = 1, Quantity = 2 },
+                new OrderItem { ProductId = 2, Quantity = 3 }
+            }
+        };
+        _orderRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(order);
+        _orderRepositoryMock.Setup(r => r.UpdateAsync(It.IsAny<Order>())).Returns(Task.CompletedTask);
+        _inventoryServiceMock.Setup(s => s.ReleaseStockAsync(It.IsAny<int>(), It.IsAny<int>())).Returns(Task.CompletedTask);
+
+        // Act
+        await _orderService.UpdateStatusAsync(1, OrderStatus.Cancelled);
+
+        // Assert
+        _inventoryServiceMock.Verify(s => s.ReleaseStockAsync(1, 2), Times.Once);
+        _inventoryServiceMock.Verify(s => s.ReleaseStockAsync(2, 3), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateStatus_CancelledSetsRefunded()
+    {
+        // Arrange
+        var order = new Order
+        {
+            Id = 1,
+            OrderNumber = "SR-20260101-ABCD1234",
+            Status = OrderStatus.Pending,
+            PaymentStatus = PaymentStatus.Paid,
+            Items = new List<OrderItem>
+            {
+                new OrderItem { ProductId = 1, Quantity = 1 }
+            }
+        };
+        _orderRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(order);
+        _orderRepositoryMock.Setup(r => r.UpdateAsync(It.IsAny<Order>())).Returns(Task.CompletedTask);
+        _inventoryServiceMock.Setup(s => s.ReleaseStockAsync(It.IsAny<int>(), It.IsAny<int>())).Returns(Task.CompletedTask);
+
+        // Act
+        await _orderService.UpdateStatusAsync(1, OrderStatus.Cancelled);
+
+        // Assert
+        order.PaymentStatus.Should().Be(PaymentStatus.Refunded);
+    }
 }

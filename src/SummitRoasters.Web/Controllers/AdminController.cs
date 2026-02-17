@@ -64,13 +64,13 @@ public class AdminController : Controller
             }).ToList()
         };
 
-        return View(viewModel);
+        return View("Products/Index", viewModel);
     }
 
     [HttpGet]
     public IActionResult CreateProduct()
     {
-        return View(new AdminProductFormViewModel());
+        return View("Products/Create", new AdminProductFormViewModel());
     }
 
     [HttpPost]
@@ -78,7 +78,7 @@ public class AdminController : Controller
     public async Task<IActionResult> CreateProduct(AdminProductFormViewModel model)
     {
         if (!ModelState.IsValid)
-            return View(model);
+            return View("Products/Create", model);
 
         var product = new Product
         {
@@ -134,7 +134,7 @@ public class AdminController : Controller
             IsFeatured = product.IsFeatured
         };
 
-        return View(viewModel);
+        return View("Products/Edit", viewModel);
     }
 
     [HttpPost]
@@ -142,7 +142,7 @@ public class AdminController : Controller
     public async Task<IActionResult> EditProduct(AdminProductFormViewModel model)
     {
         if (!ModelState.IsValid)
-            return View(model);
+            return View("Products/Edit", model);
 
         var product = await _productRepository.GetByIdAsync(model.Id!.Value);
         if (product == null)
@@ -176,7 +176,7 @@ public class AdminController : Controller
     {
         var orders = await _orderRepository.GetAllAsync();
 
-        return View(orders);
+        return View("Orders/Index", orders);
     }
 
     public async Task<IActionResult> OrderDetail(int id)
@@ -215,7 +215,7 @@ public class AdminController : Controller
             Total = order.Total
         };
 
-        return View(viewModel);
+        return View("Orders/Detail", viewModel);
     }
 
     [HttpPost]

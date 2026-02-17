@@ -3,8 +3,8 @@
     ViewData["Title"] = $"Order #{Model.OrderNumber}";
     ViewData["Breadcrumbs"] = new List<(string Label, string Url)>
     {
-        ("My Account", Url.Action("Settings", "Account")),
-        ("Orders", Url.Action("Orders", "Account")),
+        ("My Account", Url.Action("Settings", "Account") ?? ""),
+        ("Orders", Url.Action("Orders", "Account") ?? ""),
         ($"#{Model.OrderNumber}", "")
     };
 }

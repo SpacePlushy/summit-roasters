@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SummitRoasters.Infrastructure.Data;
@@ -8,6 +9,15 @@ namespace SummitRoasters.IntegrationTests;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
+    private readonly SqliteConnection _connection;
+
+    public CustomWebApplicationFactory()
+    {
+        // Use a shared in-memory SQLite database that stays open for the lifetime of the factory
+        _connection = new SqliteConnection("DataSource=:memory:");
+        _connection.Open();
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
@@ -28,11 +38,20 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             foreach (var d in descriptorsToRemove)
                 services.Remove(d);
 
-            // Add InMemory database
+            // Use SQLite in-memory database (supports relational operations unlike InMemory provider)
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseInMemoryDatabase("TestDb_" + Guid.NewGuid());
+                options.UseSqlite(_connection);
             });
         });
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        if (disposing)
+        {
+            _connection.Dispose();
+        }
     }
 }

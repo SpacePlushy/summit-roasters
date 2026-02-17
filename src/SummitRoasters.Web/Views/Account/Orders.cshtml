@@ -3,7 +3,7 @@
     ViewData["Title"] = "My Orders";
     ViewData["Breadcrumbs"] = new List<(string Label, string Url)>
     {
-        ("My Account", Url.Action("Settings", "Account")),
+        ("My Account", Url.Action("Settings", "Account") ?? ""),
         ("Orders", "")
     };
 }
@@ -82,7 +82,7 @@
             ViewData["EmptyStateTitle"] = "No orders yet";
             ViewData["EmptyStateMessage"] = "You haven't placed any orders yet. Start exploring our collection of freshly roasted coffee.";
             ViewData["EmptyStateActionText"] = "Start Shopping";
-            ViewData["EmptyStateActionUrl"] = Url.Action("Index", "Products");
+            ViewData["EmptyStateActionUrl"] = Url.Action("Index", "Products") ?? "";
         }
         @await Html.PartialAsync("_EmptyState")
     }

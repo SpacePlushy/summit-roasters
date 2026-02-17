@@ -17,11 +17,66 @@ public class SearchServiceTests
         _searchService = new SearchService(_productRepositoryMock.Object);
     }
 
-    // TODO: Search_ReturnsResults - verify that SearchAsync returns products from the repository when a valid query is provided
+    [Fact]
+    public async Task Search_ReturnsResults()
+    {
+        // Arrange
+        var products = new List<Product>
+        {
+            new Product { Id = 1, Name = "Summit Blend" },
+            new Product { Id = 2, Name = "Summit Dark" }
+        };
+        _productRepositoryMock
+            .Setup(r => r.SearchAsync("Summit", 20))
+            .ReturnsAsync(products);
 
-    // TODO: Search_ReturnsEmpty_WhenBlankQuery - verify that SearchAsync returns an empty list when the query is null, empty, or whitespace without calling the repository
+        // Act
+        var result = await _searchService.SearchAsync("Summit");
 
-    // TODO: Autocomplete_ReturnsResults - verify that AutocompleteAsync returns products from the repository when a valid query of 2 or more characters is provided
+        // Assert
+        result.Should().HaveCount(2);
+        result[0].Name.Should().Be("Summit Blend");
+    }
 
-    // TODO: Autocomplete_ReturnsEmpty_WhenQueryTooShort - verify that AutocompleteAsync returns an empty list when the query is fewer than 2 characters without calling the repository
+    [Fact]
+    public async Task Search_ReturnsEmpty_WhenBlankQuery()
+    {
+        // Act
+        var result = await _searchService.SearchAsync("   ");
+
+        // Assert
+        result.Should().BeEmpty();
+        _productRepositoryMock.Verify(r => r.SearchAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Autocomplete_ReturnsResults()
+    {
+        // Arrange
+        var products = new List<Product>
+        {
+            new Product { Id = 1, Name = "Summit Blend" }
+        };
+        _productRepositoryMock
+            .Setup(r => r.SearchAsync("Su", 5))
+            .ReturnsAsync(products);
+
+        // Act
+        var result = await _searchService.AutocompleteAsync("Su");
+
+        // Assert
+        result.Should().HaveCount(1);
+        result[0].Name.Should().Be("Summit Blend");
+    }
+
+    [Fact]
+    public async Task Autocomplete_ReturnsEmpty_WhenQueryTooShort()
+    {
+        // Act
+        var result = await _searchService.AutocompleteAsync("S");
+
+        // Assert
+        result.Should().BeEmpty();
+        _productRepositoryMock.Verify(r => r.SearchAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+    }
 }

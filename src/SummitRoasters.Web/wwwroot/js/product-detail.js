@@ -52,8 +52,8 @@ function initQuantityStepper() {
 }
 
 function initTabs() {
-    var tabButtons = document.querySelectorAll('[data-testid^="tab-button-"]');
-    var tabPanels = document.querySelectorAll('[data-testid^="tab-panel-"]');
+    var tabButtons = document.querySelectorAll('[data-testid^="product-tab-"]');
+    var tabPanels = document.querySelectorAll('[data-testid^="product-tab-content-"]');
 
     tabButtons.forEach(function (btn) {
         btn.addEventListener('click', function () {
@@ -69,7 +69,7 @@ function initTabs() {
             tabPanels.forEach(function (panel) {
                 panel.classList.add('hidden');
             });
-            var targetPanel = document.querySelector('[data-testid="tab-panel-' + target + '"]');
+            var targetPanel = document.querySelector('[data-testid="product-tab-content-' + target + '"]');
             if (targetPanel) targetPanel.classList.remove('hidden');
         });
     });

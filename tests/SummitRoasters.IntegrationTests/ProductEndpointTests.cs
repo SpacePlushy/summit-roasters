@@ -34,6 +34,27 @@ public class ProductEndpointTests : IClassFixture<CustomWebApplicationFactory>
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
-    // TODO: GetProductDetail_ReturnsSuccess
-    // TODO: GetProducts_WithSortParameter
+    [Fact]
+    public async Task GetProductDetail_ReturnsSuccess()
+    {
+        // Act
+        var response = await _client.GetAsync("/products/ethiopian-yirgacheffe");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await response.Content.ReadAsStringAsync();
+        content.Should().Contain("Ethiopian Yirgacheffe");
+    }
+
+    [Fact]
+    public async Task GetProducts_WithSortParameter_ReturnsSuccess()
+    {
+        // Act
+        var response = await _client.GetAsync("/products?sortBy=price-asc");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await response.Content.ReadAsStringAsync();
+        content.Should().Contain("products");
+    }
 }
