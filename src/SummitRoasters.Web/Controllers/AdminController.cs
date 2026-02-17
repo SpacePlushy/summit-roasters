@@ -254,6 +254,7 @@ public class AdminController : Controller
             AverageRating = p.AverageRating,
             ReviewCount = p.ReviewCount,
             StockStatus = p.StockStatus,
+            StockQuantity = p.StockQuantity,
             IsFeatured = p.IsFeatured
         };
     }

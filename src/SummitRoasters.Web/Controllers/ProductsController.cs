@@ -50,6 +50,7 @@ public class ProductsController : Controller
 
         var viewModel = new ProductListViewModel
         {
+            TotalCount = totalCount,
             Products = products.Select(MapToProductCard).ToList(),
             Filter = new ProductFilterViewModel
             {
@@ -161,6 +162,7 @@ public class ProductsController : Controller
             AverageRating = p.AverageRating,
             ReviewCount = p.ReviewCount,
             StockStatus = p.StockStatus,
+            StockQuantity = p.StockQuantity,
             IsFeatured = p.IsFeatured
         };
     }
