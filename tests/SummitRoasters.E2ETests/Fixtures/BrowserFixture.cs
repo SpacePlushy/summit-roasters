@@ -13,7 +13,8 @@ public class BrowserFixture : IAsyncLifetime
         Playwright = await Microsoft.Playwright.Playwright.CreateAsync();
         Browser = await Playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
         {
-            Headless = true
+            Headless = Environment.GetEnvironmentVariable("HEADED") != "1",
+            SlowMo = 500,
         });
     }
 

@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Project settings -->
+  <PropertyGroup>
+    <!-- Which version of .NET to compile against -->
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Auto-adds common "using" statements (System, System.Linq, etc.) so you don't have to -->
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Enables nullable reference type warnings (helps catch null bugs at compile time) -->
+    <Nullable>enable</Nullable>
+    <!-- This is a test project, not a library — don't package it as a NuGet package -->
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <!-- NuGet packages (dependencies) this project uses -->
+  <ItemGroup>
+    <!-- Code coverage collector — tracks which lines of app code your tests actually hit -->
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <!-- Readable assertion library — lets you write things like "count.Should().Be(5)" -->
+    <PackageReference Include="FluentAssertions" Version="8.8.0" />
+    <!-- The bridge between "dotnet test" and your test framework — required for any test project -->
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <!-- Playwright core library — browser automation (launch, navigate, click, fill, assert) -->
+    <PackageReference Include="Microsoft.Playwright" Version="1.58.0" />
+    <!-- Playwright + xUnit integration helpers (optional convenience layer) -->
+    <PackageReference Include="Microsoft.Playwright.Xunit" Version="1.58.0" />
+    <!-- xUnit test framework — provides [Fact], [Theory], [Collection], IAsyncLifetime, etc. -->
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <!-- xUnit test runner adapter — lets the Test SDK discover and run xUnit tests -->
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <!-- Global using statements — applied to every .cs file in this project automatically -->
+  <ItemGroup>
+    <!-- Adds "using Xunit;" everywhere so you don't need it at the top of each test file -->
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>
