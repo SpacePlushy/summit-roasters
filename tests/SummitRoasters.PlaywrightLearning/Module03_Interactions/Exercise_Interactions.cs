@@ -36,8 +36,15 @@ public class Exercise_Interactions
         // EXPECTED: After clicking, you're on a product detail page
 
         // TODO: Write your code here
-        throw new NotImplementedException("Complete this exercise!");
-    }
+        var page = await _fixture.NewPageAsync();
+        await page.GotoAsync($"{_fixture.BaseUrl}/products");
+
+        var productCards = page.Locator("[data-testid^='product-card-']");
+        await productCards.First.ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await Assertions.Expect(page.GetByTestId("product-detail-name")).ToBeVisibleAsync();
+        // throw new NotImplementedException("Complete this exercise!");
+        }
 
     [Fact]
     public async Task Exercise02_LoginWithValidCredentials()
@@ -60,7 +67,19 @@ public class Exercise_Interactions
         // EXPECTED: After login, user menu appears (means we're authenticated)
 
         // TODO: Write your code here
-        throw new NotImplementedException("Complete this exercise!");
+        var page = await _fixture.NewPageAsync();
+        await page.GotoAsync($"{_fixture.BaseUrl}/account/login");
+
+        await page.GetByTestId("login-email").FillAsync(TestCredentials.CustomerSarahEmail);
+        await page.GetByTestId("login-password").FillAsync(TestCredentials.CustomerSarahPassword);
+
+        var loginButton = page.GetByTestId("login-submit");
+
+        await loginButton.ClickAsync();
+
+        await page.WaitForURLAsync(url => !url.Contains("/account/login"),
+                new PageWaitForURLOptions { Timeout = 10000 });
+        await Assertions.Expect(page.GetByTestId("header-user-menu-toggle")).ToBeVisibleAsync();
     }
 
     [Fact]
@@ -79,8 +98,19 @@ public class Exercise_Interactions
         // EXPECTED: Search results page loads with results
 
         // TODO: Write your code here
-        throw new NotImplementedException("Complete this exercise!");
-    }
+        var page = await _fixture.NewPageAsync();
+        await page.GotoAsync(_fixture.BaseUrl);
+
+        var headerSearchInput = page.GetByTestId("header-search-input");
+        await headerSearchInput.FillAsync("blend");
+
+        await headerSearchInput.PressAsync("Enter");
+        await page.WaitForURLAsync(new System.Text.RegularExpressions.Regex("/[Ss]earch"));
+
+        var searchResultsHeading = page.GetByTestId("search-results-heading");
+        await Assertions.Expect(searchResultsHeading).ToBeVisibleAsync(); 
+        
+        }
 
     [Fact]
     public async Task Exercise04_SortProductsByPrice()
@@ -99,7 +129,38 @@ public class Exercise_Interactions
         // EXPECTED: Products page reloads with new sort order
 
         // TODO: Write your code here
-        throw new NotImplementedException("Complete this exercise!");
+        /*
+         * FIX SOLUTION (copy these lines if you want):
+         *
+         * var page = await _fixture.NewPageAsync();
+         * await page.GotoAsync($"{_fixture.BaseUrl}/products");
+         *
+         * var dropdown = page.Locator("[data-testid='products-filter-sidebar'] [data-testid='filter-sort-select']");
+         * await dropdown.SelectOptionAsync("price-desc");
+         *
+         * var filterApplyButton = page.GetByTestId("filter-apply");
+         * await filterApplyButton.ClickAsync();
+         * await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+         *
+         * var productCards = page.Locator("[data-testid^='product-card-']");
+         * var productCardCount = await productCards.CountAsync();
+         * Assert.True(productCardCount >= 1, "Expected at least one product card after applying filters.");
+         */
+        var page = await _fixture.NewPageAsync();
+        await page.GotoAsync($"{_fixture.BaseUrl}/products");
+
+        var filterSidebar = page.GetByTestId("products-filter-sidebar");
+        var dropdown = filterSidebar.GetByTestId("filter-sort-select");
+        await dropdown.SelectOptionAsync("price-desc");
+
+        var filterApplyButton = filterSidebar.GetByTestId("filter-apply");
+        await filterApplyButton.ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        var productCards = page.Locator("[data-testid^='product-card-']");
+        var productCardCount = await productCards.CountAsync();
+
+        Assert.True(productCardCount >= 1, "Expected at least one product card after applying filters.");
     }
 
     [Fact]
@@ -122,6 +183,28 @@ public class Exercise_Interactions
         // EXPECTED: Both category pages load with products
 
         // TODO: Write your code here
-        throw new NotImplementedException("Complete this exercise!");
+
+        var page = await _fixture.NewPageAsync();
+        await page.GotoAsync(_fixture.BaseUrl);
+
+        var singleOriginLink = page.GetByTestId("header-nav-single-origin");
+        await singleOriginLink.ClickAsync();
+
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await Assertions.Expect(page).ToHaveURLAsync(
+            new System.Text.RegularExpressions.Regex("category="));
+
+        var productCards = page.Locator("[data-testid^='product-card-']");
+        var productCardsCount = await productCards.CountAsync();
+        Assert.True(productCardsCount >= 1, "Product cards count should be greater or equal to 1");
+
+        var equipmentNavLink = page.GetByTestId("header-nav-equipment");
+        await equipmentNavLink.ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        productCards = page.Locator("[data-testid^='product-card-']");
+        productCardsCount = await productCards.CountAsync();
+        Assert.True(productCardsCount >= 1, "Product cards count should be greater or equal to 1");
+
     }
 }

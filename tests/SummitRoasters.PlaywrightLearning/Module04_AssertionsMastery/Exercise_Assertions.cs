@@ -42,7 +42,17 @@ public class Exercise_Assertions
         // EXPECTED: All 5 sections visible, text assertions pass
 
         // TODO: Write your code here
-        throw new NotImplementedException("Complete this exercise!");
+        var page = await _fixture.NewPageAsync();
+        await page.GotoAsync(_fixture.BaseUrl);
+        await Assertions.Expect(page.GetByTestId("hero-section")).ToBeVisibleAsync();
+        await Assertions.Expect(page.GetByTestId("featured-products-section")).ToBeVisibleAsync();
+        await Assertions.Expect(page.GetByTestId("categories-section")).ToBeVisibleAsync();
+        await Assertions.Expect(page.GetByTestId("newsletter-section")).ToBeVisibleAsync();
+        await Assertions.Expect(page.GetByTestId("footer")).ToBeVisibleAsync();
+
+        await Assertions.Expect(page.GetByTestId("hero-heading")).ToContainTextAsync("Summit Roasters");
+        await Assertions.Expect(page.GetByTestId("footer-copyright")).ToContainTextAsync("2026");
+        
     }
 
     [Fact]
@@ -66,7 +76,17 @@ public class Exercise_Assertions
         // EXPECTED: All product detail elements visible, price has dollar sign
 
         // TODO: Write your code here
-        throw new NotImplementedException("Complete this exercise!");
+        var page = await _fixture.NewPageAsync();
+        await page.GotoAsync($"{_fixture.BaseUrl}/products");
+        await page.GetByTestId("product-card-1").ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await Assertions.Expect(page.GetByTestId("product-detail-name")).ToBeVisibleAsync();
+        await Assertions.Expect(page.GetByTestId("product-detail-price")).ToBeVisibleAsync();
+        await Assertions.Expect(page.GetByTestId("product-detail-description")).ToBeVisibleAsync();
+        await Assertions.Expect(page.GetByTestId("add-to-cart-button")).ToBeVisibleAsync();
+
+        var priceText = await page.GetByTestId("product-detail-price").TextContentAsync();
+        priceText.Should().Contain("$");
     }
 
     [Fact]
@@ -86,7 +106,27 @@ public class Exercise_Assertions
         // EXPECTED: Exactly 3 category cards exist
 
         // TODO: Write your code here
-        throw new NotImplementedException("Complete this exercise!");
+
+        var page = await _fixture.NewPageAsync();
+        await page.GotoAsync(_fixture.BaseUrl);
+
+        var categoriesGrid = page.GetByTestId("categories-grid");
+        /*
+         * Alternative approach: count children from categoriesGrid directly.
+         * This keeps the locator scoped to the grid container.
+         *
+         * var categoryCardsInGrid = categoriesGrid.Locator("[data-testid^='category-card-']");
+         * var count = await categoryCardsInGrid.CountAsync();
+         *
+         * You can also count all direct child nodes:
+         * var childCount = await categoriesGrid.Locator("> *").CountAsync();
+         */
+        var categoriesChildElements = page.Locator("[data-testid^='category-card-']");
+
+        var count = await categoriesChildElements.CountAsync();
+
+        Assert.True(count == 3, "Exactly 3 category cards should exist");
+        
     }
 
     [Fact]
@@ -109,7 +149,15 @@ public class Exercise_Assertions
         // EXPECTED: Search returns results, each with name and price
 
         // TODO: Write your code here
-        throw new NotImplementedException("Complete this exercise!");
+
+        var page = await _fixture.NewPageAsync();
+        await page.GotoAsync($"{_fixture.BaseUrl}/search?q=coffee");
+
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await Assertions.Expect(page.GetByTestId("search-results-heading")).ToBeVisibleAsync();
+
+        var count = await page.Locator("[data-testid^='product-card-']").CountAsync();
+        Assert.True(count > 0, "Count should be more than 0");
     }
 
     [Fact]
